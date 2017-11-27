@@ -1,18 +1,32 @@
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const path = require('path');
 
 module.exports = {
-	entry: './src/main.ts',
+	entry: {
+		app: [
+			'babel-polyfill',
+			'./src/main.ts'
+		],
+	},
 	output: {
-		filename: './dist/bundle.js'
+		filename: './dist/[name].js'
 	},
 	resolve: {
 		extensions: ['.ts', '.tsx', '.js', '.jsx']
 	},
 	module: {
 		rules: [
-			{ test: /\.(t|j)sx?$/, use: { loader: 'awesome-typescript-loader' } },
-			{ enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
+			{
+				test: /\.(t|j)sx?$/,
+				loaders: [{
+					loader: 'awesome-typescript-loader',
+					options: {
+						configFileName: 'tsconfig.json'
+					}
+				}],
+				exclude: /\.spec\.(t|j)sx?$/
+			}//, { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
 		]
 	},
 	externals: {
@@ -25,7 +39,7 @@ module.exports = {
 		new BundleAnalyzerPlugin({
 			analyzerMode: 'disabled',
 			openAnalyzer: false,
-			statsFilename: 'dist/stats.json',
+			statsFilename: path.resolve('./dist/stats.json'),
 			generateStatsFile: true
 		})
 	]
