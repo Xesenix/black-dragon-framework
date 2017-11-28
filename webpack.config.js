@@ -5,7 +5,7 @@ const path = require('path');
 module.exports = {
 	entry: {
 		app: [
-			'babel-polyfill',
+			// 'babel-polyfill',
 			'./src/main.ts'
 		],
 	},

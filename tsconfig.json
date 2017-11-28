@@ -45,10 +45,10 @@
 			"*": ["*"]
 		},
 		// "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
-		// "typeRoots": [                            /* List of folders to include type definitions from. */
-		// 	"node_modules/@types"
-		// ],
-		// "types": ["reflect-metadata"],         /* Type declaration files to be included in compilation. */
+		"typeRoots": [                            /* List of folders to include type definitions from. */
+			"node_modules/@types"
+		],
+		"types": ["node", "jasmine"],             /* Type declaration files to be included in compilation. */
 		// "allowSyntheticDefaultImports": true,  /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
 
 		/* Source Map Options */
@@ -64,8 +64,8 @@
 			"name": "tslint-language-service"
 		}]
 	},
-	"files": [
-		"./src/main.ts"
+	"include": [
+		"src/**/*.ts"
 	],
 	"awesomeTypescriptLoaderOptions": {
 		"forceIsolatedModules": true,  /* Use this setting to disable dependent module recompilation. */

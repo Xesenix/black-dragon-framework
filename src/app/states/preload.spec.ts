@@ -11,11 +11,9 @@ describe('PreloadState', () => {
 
 	describe('enterState', () => {
 		it('should reference previous state', () => {
-			let result: any = 'No one expects spanish inquisition.';
-
-			state.enterState(emptyState).subscribe((value) => result = value.prev);
-
-			expect(result).toBe(emptyState);
+			return state.enterState(emptyState).toPromise().then((value) => {
+				expect(value.prev).toBe(emptyState);
+			});
 		});
 	});
 });
