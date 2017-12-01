@@ -1,12 +1,11 @@
 const webpack = require('./webpack.config.test.js');
 // Karma configuration
-// Generated on Sun Nov 26 2017 22:32:10 GMT+0100 (Środkowoeuropejski czas stand.)
-
 module.exports = function (config) {
+	//console.debug('karma config');process.abort();
 	config.set({
 
 		// base path that will be used to resolve all patterns (eg. files, exclude)
-		basePath: '.',
+		basePath: '',
 
 
 		// frameworks to use
@@ -15,9 +14,10 @@ module.exports = function (config) {
 
 
 		// list of files / patterns to load in the browser
-		files: [
-			'./dist/test.js'
-		],
+		files: [{
+			pattern: './src/main.test.ts',
+			included: true,
+		}],
 
 
 		// list of files to exclude
@@ -27,11 +27,11 @@ module.exports = function (config) {
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
-			//'./src/**/*.ts': ['webpack']
+			'./src/**/*.ts': ['webpack']
 		},
 
 
-		//webpack,
+		webpack,
 
 
 		// test results reporter to use
@@ -60,6 +60,12 @@ module.exports = function (config) {
 		// start these browsers
 		// available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
 		browsers: ['Chrome'],
+
+
+		// fix typescript serving video/mp2t mime type
+		mime: {
+			'text/x-typescript': ['ts','tsx']
+		},
 
 
 		// Continuous Integration mode
