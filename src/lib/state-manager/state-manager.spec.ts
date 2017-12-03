@@ -1,13 +1,53 @@
 import { Container } from 'inversify';
-import { EmptyState } from './state';
-import { StateManager } from './state-manager';
-import { StateTransitionManager } from './state-transition';
+import { EmptyState, IState } from './state';
+import { IStateProvider, StateProvider } from './state-provider';
+import { IStateTransition, IStateTransitionProvider, StateManager } from './state-manager';
+import { mapTo } from 'rxjs/operators/mapTo';
+import { ParallelTransition } from './transitions/parallel';
+import { take } from 'rxjs/operators/take';
+import { tap } from 'rxjs/operators/tap';
+import { timer } from 'rxjs/observable/timer';
+import { TransitionProvider } from './transition-provider';
+// import { ConcatTransition } from './transitions/concat';
+
+class MockState extends EmptyState implements IState {
+	constructor(public name: string) {
+		super();
+	}
+
+	public leaveState(nextState: IState, manager: StateManager): IStateTransition {
+		console.debug(`MockState:leaveState: ${this.name}`);
+		return timer(0, 100).pipe(
+			tap((x) => console.debug(`MockState:leaving ${this.name}: ${x}`)),
+			take(10),
+			mapTo({ prev: (this as IState), next: nextState, manager }),
+		);
+	}
+
+	public enterState(previousState: IState, manager: StateManager): IStateTransition {
+		console.debug(`MockState:enterState: ${this.name}`);
+		return timer(0, 100).pipe(
+			tap((x) => console.debug(`MockState:entering ${this.name}: ${x}`)),
+			take(5),
+			mapTo({ prev: previousState, next: (this as IState), manager }),
+		);
+	}
+}
 
 describe('StateManager', () => {
+	const initialState = new MockState('state:initial');
+	const preloadState = new MockState('state:preload');
+	const menuState = new MockState('state:menu');
+
 	const container = new Container();
-	container.bind<StateTransitionManager>(StateTransitionManager).toSelf();
 	container.bind<StateManager>(StateManager).toSelf();
-	container.bind<EmptyState>('initial-state').toConstantValue(new EmptyState());
+	container.bind<IState>('state:initial').toConstantValue(initialState);
+	container.bind<IState>('state:preload').toConstantValue(preloadState);
+	container.bind<IState>('state:menu').toConstantValue(menuState);
+	container.bind<IStateProvider>('state:state-provider').toProvider(StateProvider);
+
+	container.bind<IStateTransitionProvider>('state:transition:default-transition').toConstantValue(ParallelTransition);
+	container.bind<IStateTransitionProvider>('state:transition:provider').toFactory(TransitionProvider);
 
 	beforeEach(() => {
 		container.snapshot();
@@ -18,14 +58,34 @@ describe('StateManager', () => {
 	});
 
 	describe('changeState', () => {
-		it('should run', () => {
+		it('should set current state to next state after finishing', (done) => {
 			const sm: StateManager = container.get<StateManager>(StateManager);
-			let result: any = 'no one expects spanish inquisition';
-			const nextState = new EmptyState();
+			const currentState = sm.currentState$.getValue();
+			const nextStateKey = 'state:preload';
+			const nextState = container.get<IState>(nextStateKey);
+			spyOn(currentState, 'leaveState').and.callThrough();
+			spyOn(nextState, 'enterState').and.callThrough();
 
-			sm.changeState(nextState).subscribe((value) => result = value);
+			console.debug('=== async start');
 
-			expect(result.next).toBe(nextState);
+			sm.changeState(nextStateKey).subscribe(
+				(value) => {
+					console.debug('=== async progress');
+					expect(value.prev).toBe(currentState);
+					expect(value.next).toBe(nextState);
+				},
+				(err) => {
+					console.error(err.message);
+					fail('shouldn\'t throw exception');
+				},
+				() => {
+					expect(sm.currentState$.getValue()).toBe(nextState);
+					expect(currentState.leaveState).toHaveBeenCalled();
+					expect(nextState.enterState).toHaveBeenCalled();
+					done();
+					console.debug('=== async completed');
+				},
+			);
 		});
 	});
 });

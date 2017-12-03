@@ -1,19 +1,19 @@
 import { injectable } from 'inversify';
 import { of } from 'rxjs/observable/of';
-import { IStateTransition } from './index';
+import { IStateTransition, StateManager } from './index';
 
 export interface IState {
-	leaveState(nextState: IState): IStateTransition;
-	enterState(previousState: IState): IStateTransition;
+	leaveState(nextState: IState, manager: StateManager): IStateTransition;
+	enterState(previousState: IState, manager: StateManager): IStateTransition;
 }
 
 @injectable()
 export class EmptyState implements IState {
-	public enterState(previousState: IState): IStateTransition {
-		return of({ prev: previousState, next: this });
+	public enterState(previousState: IState, manager: StateManager): IStateTransition {
+		return of({ prev: previousState, next: this, manager });
 	}
 
-	public leaveState(nextState: IState): IStateTransition {
-		return of({ prev: this, next: nextState });
+	public leaveState(nextState: IState, manager: StateManager): IStateTransition {
+		return of({ prev: this, next: nextState, manager });
 	}
 }
