@@ -20,9 +20,9 @@ module.exports = {
 				}]
 			}
 		]
-	},
+	}/*,
 	externals: {
 		'react': 'React',
-		'resct-dom': 'ReactDOM'
-	}
+		'react-dom': 'ReactDOM'
+	}*/
 }

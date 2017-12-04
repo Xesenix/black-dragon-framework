@@ -67,23 +67,21 @@ describe('StateManager', () => {
 			spyOn(nextState, 'enterState').and.callThrough();
 
 			console.debug('=== async start');
-
-			sm.changeState(nextStateKey).subscribe(
+			sm.boot()
+			.then(() => sm.changeState(nextStateKey))
+			.then(
 				(value) => {
-					console.debug('=== async progress');
 					expect(value.prev).toBe(currentState);
 					expect(value.next).toBe(nextState);
-				},
-				(err) => {
-					console.error(err.message);
-					fail('shouldn\'t throw exception');
-				},
-				() => {
 					expect(sm.currentState$.getValue()).toBe(nextState);
 					expect(currentState.leaveState).toHaveBeenCalled();
 					expect(nextState.enterState).toHaveBeenCalled();
 					done();
 					console.debug('=== async completed');
+				},
+				(err) => {
+					console.error(err.message);
+					fail('shouldn\'t throw exception');
 				},
 			);
 		});

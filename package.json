@@ -29,6 +29,8 @@
 		"@types/karma-jasmine": "0.0.29",
 		"@types/karma-webpack": "^2.0.1",
 		"@types/node": "^8.0.53",
+		"@types/react": "^16.0.26",
+		"@types/react-dom": "^16.0.3",
 		"@types/reflect-metadata": "0.0.5",
 		"@types/sinon": "^4.0.0",
 		"@types/webpack": "^3.8.1",

@@ -5,7 +5,7 @@ const path = require('path');
 module.exports = {
 	entry: {
 		app: [
-			// 'babel-polyfill',
+			'babel-polyfill',
 			'./src/main.ts'
 		],
 	},
@@ -29,13 +29,13 @@ module.exports = {
 			}//, { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
 		]
 	},
-	externals: {
+	/*externals: {
 		'react': 'React',
-		'resct-dom': 'ReactDOM'
-	},
+		'react-dom': 'ReactDOM'
+	},*/
 	devtool: 'source-map',
 	plugins: [
-		new UglifyJsPlugin(),
+		//new UglifyJsPlugin(),
 		new BundleAnalyzerPlugin({
 			analyzerMode: 'disabled',
 			openAnalyzer: false,

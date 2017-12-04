@@ -1,38 +1,23 @@
 import { Container } from 'inversify';
-import {
-	EmptyState,
-	IState,
-	StateManager,
-	StateTransitionManager
-} from '../lib/state-manager';
+import { IStateTransitionProvider, StateManager } from './../lib/state-manager';
+import { IState } from './../lib/state-manager/state';
+import { IStateProvider, StateProvider } from './../lib/state-manager/state-provider';
+import { TransitionProvider } from './../lib/state-manager/transition-provider';
+import { ParallelTransition } from './../lib/state-manager/transitions/parallel';
 import { PreloadState } from './states/preload';
 
-export interface IAppState extends IState {
-	update(): void;
-}
+declare const document: Document;
 
-const Symbols = {
-	StateTransitionManager: Symbol('state-transition-manager'),
-	StateManager: Symbol('state-manager'),
-	CanvasView: Symbol('canvas-view'),
-	DataStoreManager: Symbol('data-store-manager'),
-	DOMView: Symbol('dom-view'),
+export const containerFactory = () => {
+	const container = new Container();
+
+	container.bind<IStateProvider>('state:state-provider').toProvider(StateProvider);
+	container.bind<IStateTransitionProvider>('state:transition:default-transition').toConstantValue(ParallelTransition);
+	container.bind<IStateTransitionProvider>('state:transition:provider').toFactory(TransitionProvider);
+	container.bind<StateManager>('ui:state-manager').to(StateManager);
+	container.bind<IState>('state:initial').to(PreloadState);
+	console.log('document', document.getElementById('app'));
+	container.bind<HTMLElement>('ui:root').toConstantValue(document.getElementById('app') as HTMLElement);
+
+	return container;
 };
-
-export const container = new Container();
-
-container.bind<StateTransitionManager>(Symbols.StateTransitionManager);
-container.bind<StateManager>(Symbols.StateManager);
-container.bind<any>(Symbols.DOMView);
-container.bind<any>(Symbols.CanvasView);
-container.bind<any>(Symbols.DataStoreManager);
-container.bind<IState>('empty-state').toConstantValue(new EmptyState());
-container.bind<IState>('preload-state').toConstantValue(new PreloadState());
-container.bind<IState>('preload-state-provider').toProvider((context) => () => {
-	const state = context.container.get<IState>('preload-state');
-	return new Promise<IState>((resolve: (state: IState) => void) => resolve(state));
-});
-container.bind<IState>('menu-state');
-container.bind<IState>('game-state');
-container.bind<IState>('configuration-state');
-container.bind<IState>('help-state');
