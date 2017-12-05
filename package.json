@@ -4,7 +4,7 @@
 	"description": "Game creation framework - state management, dependency injection, entity system, interchangeable view renderers. On top of webpack typescript",
 	"main": "src/main.ts",
 	"scripts": {
-		"start": "webpack",
+		"start": "webpack-dev-server --progress --inline --hot",
 		"analyze": "webpack-bundle-analyzer dist/stats.json",
 		"lint": "tslint",
 		"test": "karma start",
@@ -23,6 +23,7 @@
 	"devDependencies": {
 		"@types/babel-core": "^6.25.3",
 		"@types/es6-promise": "0.0.33",
+		"@types/html-webpack-plugin": "^2.30.1",
 		"@types/inversify": "^2.0.33",
 		"@types/jasmine": "^2.8.2",
 		"@types/karma": "^1.7.2",
@@ -41,6 +42,7 @@
 		"babel-preset-es2015": "^6.24.1",
 		"babel-preset-react": "^6.24.1",
 		"babel-preset-stage-2": "^6.24.1",
+		"html-webpack-plugin": "^2.30.1",
 		"jasmine": "^2.8.0",
 		"jasmine-core": "^2.8.0",
 		"karma": "^1.7.1",
@@ -56,7 +58,8 @@
 		"typescript": "^2.6.1",
 		"uglifyjs-webpack-plugin": "^1.1.1",
 		"webpack": "^3.8.1",
-		"webpack-bundle-analyzer": "^2.9.1"
+		"webpack-bundle-analyzer": "^2.9.1",
+		"webpack-dev-server": "^2.9.5"
 	},
 	"author": "Xesenix",
 	"license": "ISC"

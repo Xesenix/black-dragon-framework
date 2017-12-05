@@ -1,7 +1,4 @@
 module.exports = {
-	entry: [
-		'./src/main.test.ts'
-	],
 	output: {
 		filename: './dist/test.js'
 	},

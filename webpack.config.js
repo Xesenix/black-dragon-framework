@@ -1,5 +1,6 @@
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -10,7 +11,9 @@ module.exports = {
 		],
 	},
 	output: {
-		filename: './dist/[name].js'
+		path: path.resolve('dist'),
+		publicPath: '/',
+		filename: './js/[name].js'
 	},
 	resolve: {
 		extensions: ['.ts', '.tsx', '.js', '.jsx']
@@ -36,11 +39,22 @@ module.exports = {
 	devtool: 'source-map',
 	plugins: [
 		//new UglifyJsPlugin(),
-		new BundleAnalyzerPlugin({
+		/*new BundleAnalyzerPlugin({
 			analyzerMode: 'disabled',
 			openAnalyzer: false,
 			statsFilename: path.resolve('./dist/stats.json'),
 			generateStatsFile: true
+		})*/
+		new HtmlWebpackPlugin({
+			inject: true,
+			template: path.resolve('./src/index.html'),
+			minify: {
+				removeComments: true,
+				preserveLineBreaks: false
+			},
+			xhtml: false,
+			mobile: true,
+			showErrors: true
 		})
 	]
 }
