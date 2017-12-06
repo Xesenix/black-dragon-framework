@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import '../../../styles/main.scss';
+
 export interface IAppProps { x?: string; }
 
 export class App extends React.Component<IAppProps, {}> {
@@ -10,6 +12,10 @@ export class App extends React.Component<IAppProps, {}> {
 	public render(): any {
 		const { x = null } = this.props;
 
-		return (<div>{ !!x ? `Loading: ${x}` : 'APP REACT READY'}</div>);
+		return (<div className="container">
+			<div className="row">
+				<div className="alert alert-info">{ !!x ? `Loading: ${x}` : 'APP READY'}</div>
+			</div>
+		</div>);
 	}
 }

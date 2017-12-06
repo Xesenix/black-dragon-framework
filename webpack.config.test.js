@@ -1,3 +1,7 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const path = require('path');
+
 module.exports = {
 	output: {
 		filename: './dist/test.js'
@@ -15,11 +19,69 @@ module.exports = {
 						configFileName: 'tsconfig.test.json'
 					}
 				}]
+			},
+			{
+				test: /\.scss$/,
+				/*use: [{
+					loader: 'css-loader',
+					options: { includePaths: [path.resolve('src/styles')] }
+				}, {
+					loader: 'sass-loader',
+					options: { includePaths: [path.resolve('src/styles')] }
+				}]*/
+				use: ExtractTextPlugin.extract({
+					fallback: 'style-loader',
+					use: [{
+						loader: 'css-loader',
+						options: { includePaths: [path.resolve('src/styles')] }
+					}, {
+						loader: 'sass-loader',
+						options: { includePaths: [path.resolve('src/styles')] }
+					}]
+				})
+			},
+			{
+				test: /\.svg$/,
+				loader: 'svg-inline-loader'
+			},
+			{
+				test: /\.(eot|svg|ttf|woff|woff2)$/,
+				use: [
+					'file-loader?name=public/fonts/[name].[ext]'
+				]
+			},
+			{
+				test: /\.(png|jpg|gif)$/,
+				use: [{
+					loader: 'file-loader',
+					options: {}
+				}]
 			}
 		]
-	}/*,
+	},/*
 	externals: {
 		'react': 'React',
 		'react-dom': 'ReactDOM'
 	}*/
+	plugins: [
+		//new UglifyJsPlugin(),
+		/*new BundleAnalyzerPlugin({
+			analyzerMode: 'disabled',
+			openAnalyzer: false,
+			statsFilename: path.resolve('./dist/stats.json'),
+			generateStatsFile: true
+		})*/
+		new HtmlWebpackPlugin({
+			inject: true,
+			template: path.resolve('./src/index.html'),
+			minify: {
+				removeComments: true,
+				preserveLineBreaks: false
+			},
+			xhtml: false,
+			mobile: true,
+			showErrors: true
+		}),
+		new ExtractTextPlugin('styles.css'),
+	]
 }

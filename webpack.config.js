@@ -1,6 +1,7 @@
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -16,7 +17,10 @@ module.exports = {
 		filename: './js/[name].js'
 	},
 	resolve: {
-		extensions: ['.ts', '.tsx', '.js', '.jsx']
+		extensions: ['.ts', '.tsx', '.js', '.jsx'],
+		alias: {
+			'~*': path.resolve('node_modules') + '/*'
+		}
 	},
 	module: {
 		rules: [
@@ -29,7 +33,44 @@ module.exports = {
 					}
 				}],
 				exclude: /\.spec\.(t|j)sx?$/
-			}//, { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
+			},//, { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
+			{
+				test: /\.scss$/,
+				/*use: [{
+					loader: 'css-loader',
+					options: { includePaths: [path.resolve('src/styles')] }
+				}, {
+					loader: 'sass-loader',
+					options: { includePaths: [path.resolve('src/styles')] }
+				}]*/
+				use: ExtractTextPlugin.extract({
+					fallback: 'style-loader',
+					use: [{
+						loader: 'css-loader',
+						options: { includePaths: [path.resolve('src/styles')] }
+					}, {
+						loader: 'sass-loader',
+						options: { includePaths: [path.resolve('src/styles')] }
+					}]
+				})
+			},
+			{
+				test: /\.svg$/,
+				loader: 'svg-inline-loader'
+			},
+			{
+				test: /\.(eot|svg|ttf|woff|woff2)$/,
+				use: [
+					'file-loader?name=public/fonts/[name].[ext]'
+				]
+			},
+			{
+				test: /\.(png|jpg|gif)$/,
+				use: [ {
+					loader: 'file-loader',
+					options: {}
+				} ]
+			},
 		]
 	},
 	/*externals: {
@@ -55,6 +96,7 @@ module.exports = {
 			xhtml: false,
 			mobile: true,
 			showErrors: true
-		})
+		}),
+		new ExtractTextPlugin('styles.css'),
 	]
 }
