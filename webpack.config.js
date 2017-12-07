@@ -2,6 +2,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
@@ -32,7 +33,7 @@ module.exports = {
 						configFileName: 'tsconfig.json'
 					}
 				}],
-				exclude: /\.spec\.(t|j)sx?$/
+				exclude: /^src\/.+\.spec\.(t|j)sx?$/
 			},//, { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
 			{
 				test: /\.scss$/,
@@ -60,16 +61,14 @@ module.exports = {
 			},
 			{
 				test: /\.(eot|svg|ttf|woff|woff2)$/,
-				use: [
-					'file-loader?name=public/fonts/[name].[ext]'
-				]
+				use: [ 'file-loader?name=public/fonts/[name].[ext]' ]
 			},
 			{
 				test: /\.(png|jpg|gif)$/,
-				use: [ {
+				use: [{
 					loader: 'file-loader',
 					options: {}
-				} ]
+				}]
 			},
 		]
 	},
@@ -79,7 +78,7 @@ module.exports = {
 	},*/
 	devtool: 'source-map',
 	plugins: [
-		//new UglifyJsPlugin(),
+		new UglifyJsPlugin(),
 		/*new BundleAnalyzerPlugin({
 			analyzerMode: 'disabled',
 			openAnalyzer: false,
@@ -97,6 +96,10 @@ module.exports = {
 			mobile: true,
 			showErrors: true
 		}),
-		new ExtractTextPlugin('styles.css'),
+		new ExtractTextPlugin('css/styles.css'),
+		new webpack.optimize.CommonsChunkPlugin({
+			name: 'vendor',
+			minChunks: ({ resource } = {} ) => (resource && resource.includes('node_modules'))
+		}),
 	]
 }

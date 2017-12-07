@@ -60,7 +60,7 @@ export class PreloadState {
 		console.debug('PreloadState:leaveState');
 		return this.cleanState().pipe(
 			last(),
-			mapTo({ prev: this, next: nextState, manager }
-		));
+			mapTo({ prev: this, next: nextState, manager }),
+		);
 	}
 }
