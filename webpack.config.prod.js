@@ -79,6 +79,13 @@ module.exports = {
 	},*/
 	devtool: 'source-map',
 	plugins: [
+		new UglifyJsPlugin(),
+		new BundleAnalyzerPlugin({
+			analyzerMode: 'disabled',
+			openAnalyzer: false,
+			statsFilename: path.resolve('./dist/stats.json'),
+			generateStatsFile: true
+		}),
 		new HtmlWebpackPlugin({
 			inject: true,
 			template: path.resolve('./src/index.html'),
@@ -100,7 +107,7 @@ module.exports = {
 			minChunks: ({ resource }) => /node_modules(\\|\/)(react|react-dom)/.test(resource)
 		}),
 		new webpack.EnvironmentPlugin({
-			NODE_ENV: 'development'
+			NODE_ENV: 'production'
 		}),
 		new webpack.optimize.OccurrenceOrderPlugin()
 	]

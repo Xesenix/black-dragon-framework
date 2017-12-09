@@ -9,7 +9,7 @@
 		"lint": "tslint",
 		"test": "karma start",
 		"build:tsc": "tsc ./src/main.ts",
-		"build": "webpack --config webpack.config.js",
+		"build": "webpack --config webpack.config.prod.js",
 		"build:test": "webpack --config webpack.config.test.js"
 	},
 	"dependencies": {
