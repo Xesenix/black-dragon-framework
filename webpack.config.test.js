@@ -7,7 +7,16 @@ module.exports = {
 		filename: './dist/test.js'
 	},
 	resolve: {
-		extensions: ['.ts', '.tsx', '.js', '.jsx']
+		extensions: ['.ts', '.tsx', '.js', '.jsx'],
+		alias: {
+			assets$: path.resolve(__dirname, 'src/assets')
+		},
+		modules: [
+			path.resolve(__dirname, 'src'),
+			path.resolve(__dirname, 'src/styles'),
+			path.resolve(__dirname, 'src/assets'),
+			'node_modules'
+		]
 	},
 	module: {
 		rules: [
@@ -47,7 +56,7 @@ module.exports = {
 			{
 				test: /\.(eot|svg|ttf|woff|woff2)$/,
 				use: [
-					'file-loader?name=public/fonts/[name].[ext]'
+					'file-loader?name=assets/fonts/[name].[ext]'
 				]
 			},
 			{

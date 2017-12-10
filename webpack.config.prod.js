@@ -5,6 +5,15 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
 
+const extractCss = new ExtractTextPlugin({
+	filename: 'css/[name].[contenthash].css',
+	disable: false
+});
+const extractSass = new ExtractTextPlugin({
+	filename: 'css/[name].[contenthash].css',
+	disable: false
+});
+
 module.exports = {
 	entry: {
 		app: [
@@ -15,13 +24,19 @@ module.exports = {
 	output: {
 		path: path.resolve('dist'),
 		publicPath: '/',
-		filename: './js/[name].js'
+		filename: './js/[name].[hash].js'
 	},
 	resolve: {
 		extensions: ['.ts', '.tsx', '.js', '.jsx'],
 		alias: {
-			'~*': path.resolve('node_modules') + '/*'
-		}
+			assets$: path.resolve(__dirname, 'src/assets')
+		},
+		modules: [
+			path.resolve(__dirname, 'src'),
+			path.resolve(__dirname, 'src/styles'),
+			path.resolve(__dirname, 'src/assets'),
+			'node_modules'
+		]
 	},
 	module: {
 		rules: [
@@ -35,25 +50,42 @@ module.exports = {
 				}],
 				exclude: /^src\/.+\.spec\.(t|j)sx?$/
 			},
-			{ enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' },
+			{
+				test: /\.css$/,
+				use: extractCss.extract({
+					fallback: 'style-loader',
+					use: [
+						'css-loader',
+						{
+							loader: 'resolve-url-loader',
+							options: {
+								debug: false,
+								sourceMap: false,
+								root: path.resolve(__dirname, 'src/assets')
+							}
+						}
+					]
+				})
+			},
 			{
 				test: /\.scss$/,
-				/*use: [{
-					loader: 'css-loader',
-					options: { includePaths: [path.resolve('src/styles')] }
-				}, {
-					loader: 'sass-loader',
-					options: { includePaths: [path.resolve('src/styles')] }
-				}]*/
-				use: ExtractTextPlugin.extract({
+				use: extractSass.extract({
 					fallback: 'style-loader',
-					use: [{
-						loader: 'css-loader',
-						options: { includePaths: [path.resolve('src/styles')] }
-					}, {
-						loader: 'sass-loader',
-						options: { includePaths: [path.resolve('src/styles')] }
-					}]
+					use: [
+						'css-loader',
+						{
+							loader: 'resolve-url-loader',
+							options: {
+								debug: false,
+								sourceMap: false,
+								root: path.resolve(__dirname, 'src/assets')
+							}
+						},
+						{
+							loader: 'sass-loader',
+							options: { sourceMap: false }
+						}
+					]
 				})
 			},
 			{
@@ -62,13 +94,17 @@ module.exports = {
 			},
 			{
 				test: /\.(eot|svg|ttf|woff|woff2)$/,
-				use: [ 'file-loader?name=public/fonts/[name].[ext]' ]
+				use: [ 'file-loader?name=assets/fonts/[name].[ext]' ]
 			},
 			{
 				test: /\.(png|jpg|gif)$/,
 				use: [{
 					loader: 'file-loader',
-					options: {}
+					options: {
+						name: '[path][name].[ext]',
+						context: path.resolve(__dirname, 'src/assets'), // root for path
+						outputPath: 'assets/images/'
+					}
 				}]
 			},
 		]
@@ -97,7 +133,7 @@ module.exports = {
 			mobile: true,
 			showErrors: true
 		}),
-		new ExtractTextPlugin('css/styles.css'),
+		extractSass,
 		new webpack.optimize.CommonsChunkPlugin({
 			name: 'vendor',
 			minChunks: ({ resource } = {} ) => /node_modules/.test(resource)
