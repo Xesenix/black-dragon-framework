@@ -14,11 +14,12 @@ const extractSass = new ExtractTextPlugin({
 	disable: true
 });
 
-module.exports = {
+module.exports = (env) => ({
+	context: path.resolve(__dirname, 'src'),
 	entry: {
 		app: [
 			'babel-polyfill',
-			'./src/main.ts'
+			'./main.ts'
 		],
 	},
 	output: {
@@ -33,6 +34,8 @@ module.exports = {
 			'node_modules'
 		],
 	},
+	devtool: env.prod ? 'source-map' : 'eval',
+	bail: env.prod,
 	module: {
 		rules: [
 			{
@@ -117,7 +120,6 @@ module.exports = {
 		'react': 'React',
 		'react-dom': 'ReactDOM'
 	},*/
-	devtool: 'source-map',
 	plugins: [
 		new HtmlWebpackPlugin({
 			inject: true,
@@ -145,4 +147,4 @@ module.exports = {
 		}),
 		new webpack.optimize.OccurrenceOrderPlugin()
 	]
-}
+})

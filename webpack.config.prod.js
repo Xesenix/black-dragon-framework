@@ -15,11 +15,12 @@ const extractSass = new ExtractTextPlugin({
 	disable: false
 });
 
-module.exports = {
+module.exports = (env) => ({
+	context: path.resolve(__dirname, 'src'),
 	entry: {
 		app: [
 			'babel-polyfill',
-			'./src/main.ts'
+			'./main.ts'
 		],
 	},
 	output: {
@@ -34,6 +35,8 @@ module.exports = {
 			'node_modules'
 		]
 	},
+	devtool: env.prod ? 'source-map' : 'eval',
+	bail: env.prod,
 	module: {
 		rules: [
 			{
@@ -72,12 +75,12 @@ module.exports = {
 							loader: 'resolve-url-loader',
 							options: {
 								debug: false,
-								sourceMap: false,
+								sourceMap: true,
 							}
 						},
 						{
 							loader: 'sass-loader',
-							options: { sourceMap: false }
+							options: { sourceMap: true }
 						}
 					]
 				})
@@ -113,7 +116,6 @@ module.exports = {
 		'react': 'React',
 		'react-dom': 'ReactDOM'
 	},*/
-	devtool: 'source-map',
 	plugins: [
 		new CleanWebpackPlugin(['dist']),
 		new UglifyJsPlugin(),
@@ -148,4 +150,4 @@ module.exports = {
 		}),
 		new webpack.optimize.OccurrenceOrderPlugin()
 	]
-}
+})
