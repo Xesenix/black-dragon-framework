@@ -62,7 +62,8 @@
 		"emitDecoratorMetadata": true,            /* Enables experimental support for emitting type metadata for decorators. */
 		"plugins": [{
 			"name": "tslint-language-service"
-		}]
+		}],
+		"skipLibCheck": true // hack https://github.com/ReactiveX/rxjs/issues/3031
 	},
 	"include": [
 		"src/**/*.ts"

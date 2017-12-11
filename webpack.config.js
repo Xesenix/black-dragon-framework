@@ -28,15 +28,10 @@ module.exports = {
 	},
 	resolve: {
 		extensions: ['.ts', '.tsx', '.js', '.jsx'],
-		alias: {
-			assets$: path.resolve(__dirname, 'src/assets')
-		},
 		modules: [
 			path.resolve(__dirname, 'src'),
-			path.resolve(__dirname, 'src/styles'),
-			path.resolve(__dirname, 'src/assets'),
 			'node_modules'
-		]
+		],
 	},
 	module: {
 		rules: [
@@ -66,7 +61,6 @@ module.exports = {
 							options: {
 								debug: true,
 								sourceMap: true,
-								root: path.resolve(__dirname, 'src/assets')
 							}
 						}
 					]
@@ -83,7 +77,6 @@ module.exports = {
 							options: {
 								debug: true,
 								sourceMap: true,
-								root: path.resolve(__dirname, 'src/assets')
 							}
 						},
 						{
@@ -99,7 +92,13 @@ module.exports = {
 			},
 			{
 				test: /\.(eot|svg|ttf|woff|woff2)$/,
-				use: [ 'file-loader?name=assets/fonts/[name].[ext]' ]
+				use: [{
+					loader: 'file-loader',
+					options: {
+						name: '[name].[ext]',
+						outputPath: 'assets/fonts/'
+					}
+				}]
 			},
 			{
 				test: /\.(png|jpg|gif)$/,

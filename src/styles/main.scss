@@ -1,16 +1,10 @@
-$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
+$icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
 $brand-primary: black;
-@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+@import '~bootstrap-sass/assets/stylesheets/bootstrap';
 
-body:before {
-	content: '';
-	position: fixed;
-	width: 100vw;
-	height: 100vh;
-	z-index: -1;
+body {
 	background-color: $brand-primary;
-	background-image: url('../assets/bg.png');
-	background-size: 512px;
+	background-image: url('../assets/background/stones01.png');
+	background-size: 256px;
 	image-rendering: pixelated;
-	filter: brightness(20%);
 }
