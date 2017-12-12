@@ -1,4 +1,4 @@
-const webpack = require('./webpack.config.test.js');
+const webpack = require('./webpack.config.js')({ test: true });
 // Karma configuration
 module.exports = function (config) {
 	//console.debug('karma config');process.abort();
