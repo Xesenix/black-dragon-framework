@@ -1,18 +1,17 @@
 import { injectable, inject } from 'inversify';
-import { concat } from 'rxjs/observable/concat';
-import { of } from 'rxjs/observable/of';
-import { last } from 'rxjs/operators/last';
-import { mapTo } from 'rxjs/operators/mapTo';
-import { IState, IStateTransition } from './../../lib/state-manager';
-import { StateManager } from './../../lib/state-manager/state-manager';
-
-import { App } from './../game-view/container/app';
-
 import * as React from 'react';
 import { render } from 'react-dom';
-import { timer } from 'rxjs/observable/timer';
+import { concat } from 'rxjs/observable/concat';
+import { of } from 'rxjs/observable/of';
+import { throttleTime } from 'rxjs/operators/throttleTime';
+import { last } from 'rxjs/operators/last';
+import { mapTo } from 'rxjs/operators/mapTo';
 import { tap } from 'rxjs/operators/tap';
-import { take } from 'rxjs/operators/take';
+import { TweenObservable } from 'xes-rx-tween';
+
+import { IState, IStateTransition } from './../../lib/state-manager';
+import { StateManager } from './../../lib/state-manager/state-manager';
+import { App } from './../game-view/container/app';
 
 @injectable()
 export class PreloadState {
@@ -22,15 +21,13 @@ export class PreloadState {
 
 	public create() {
 		console.debug('PreloadState:create');
-		return timer(0, 1000).pipe(
-			tap((x) => console.debug('PreloadState:create:timer', x)),
-			take(10),
+		return concat(
+			TweenObservable.create(5000, 0, 100).pipe(throttleTime(100)),
+			of(100),
+		).pipe(
+			tap((x) => console.debug('PreloadState:progress', x)),
 			tap((x) => {
-				render(<App x={x.toString()}/>, this.uiRoot);
-			}),
-			last(),
-			tap((x) => {
-				render(<App/>, this.uiRoot);
+				render(<App x={x}/>, this.uiRoot);
 			}),
 		);
 	}
