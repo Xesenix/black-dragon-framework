@@ -2,7 +2,7 @@ import { tap } from 'rxjs/operators/tap';
 import { IStateTransition, IStateTransitionStep } from './state-manager';
 import { inject, injectable } from 'inversify';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/observable';
+import { Observable } from 'rxjs/Observable';
 import { from } from 'rxjs/observable/from';
 import { last } from 'rxjs/operators/last';
 import { switchMap } from 'rxjs/operators/switchMap';
