@@ -1,11 +1,6 @@
-import { inject, injectable } from 'inversify';
-import { createStore, Reducer } from 'redux';
+import { inject, injectable, optional } from 'inversify';
+import { AnyAction, createStore, Reducer } from 'redux';
 import { Observable } from 'rxjs/Observable';
-
-export interface IAction {
-	type: string;
-	payload: { [key: string]: any };
-}
 
 @injectable()
 export class DataStore<T> {
@@ -25,11 +20,10 @@ export class DataStore<T> {
 	public constructor(
 		@inject('data-store:initial-state') private state: T,
 		@inject('data-store:action-reducer') public reducer: Reducer<T>,
-		@inject('data-store:store-enhancer') private enhancer: any,
+		@inject('data-store:store-enhancer') @optional() private enhancer: any,
 	) { }
 
-	public dispatch(action: IAction): IAction {
-		console.debug('dispatch', action);
+	public dispatch(action: AnyAction): AnyAction {
 		return this.store.dispatch(action);
 	}
 

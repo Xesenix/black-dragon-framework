@@ -1,11 +1,11 @@
 import { IAppState } from 'app/reducer';
 import { inject, injectable } from 'inversify';
 import { DataStore } from 'lib/data-store/data-store';
+import { ReactRenderer } from 'lib/renderer/react-renderer';
 import { IState } from 'lib/state-manager/state';
 import { StateManager } from 'lib/state-manager/state-manager';
 import { IStateTransition } from 'lib/state-manager/state-manager';
 import * as React from 'react';
-import { render } from 'react-dom';
 import { concat } from 'rxjs/observable/concat';
 import { of } from 'rxjs/observable/of';
 import { last } from 'rxjs/operators/last';
@@ -17,24 +17,35 @@ import { WelcomeView } from './view';
 @injectable()
 export class WelcomeState {
 	public constructor(
-		@inject('ui:root') private uiRoot: HTMLElement,
+		@inject('ui:renderer') private renderer: ReactRenderer,
 		@inject('data-store') private dataStore: DataStore<IAppState>,
 	) { }
 
 	public create() {
-		render(<WelcomeView dataStore={this.dataStore} />, this.uiRoot);
+		this.renderer.render(<WelcomeView dataStore={this.dataStore} />);
 		return concat(
-			TweenObservable.create(1000, 0, 100),
-			of(100),
+			TweenObservable.create(5000, 0, 100),
+			// of(100),
 		).pipe(
-			tap((progress) => this.dataStore.dispatch({ type: 'PRELOAD:SET_PROGRESS', payload: { progress } })),
+			tap((progress) => this.dataStore.dispatch({
+				type: 'PRELOAD:SET_PROGRESS',
+				payload: { progress, description: 'creating' },
+			})),
 			// tap((x) => console.log('load:', x)),
 		);
 	}
 
 	public loadState() {
 		console.debug('WelcomeState:loadState');
-		return of(true);
+		return concat(
+			TweenObservable.create(5000, 0, 100),
+			// of(100),
+		).pipe(
+			tap((progress) => this.dataStore.dispatch({
+				type: 'PRELOAD:SET_PROGRESS',
+				payload: { progress, description: 'loading' },
+			})),
+		);
 	}
 
 	public cleanState() {

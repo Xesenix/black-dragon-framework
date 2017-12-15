@@ -51,6 +51,6 @@ export class WelcomeView extends React.Component<IWelcomeViewProps, IWelcomeView
 	public render(): any {
 		const { preload } = this.state;
 
-		return (<div>Welcome { preload.progress.toFixed(0) }</div>);
+		return (<div>Welcome<br/>{ preload.description } { preload.progress.toFixed(0) }%</div>);
 	}
 }

@@ -1,5 +1,6 @@
 import { Container } from 'inversify';
 import { DataStore } from 'lib/data-store/data-store';
+import { ReactRenderer } from 'lib/renderer/react-renderer';
 import { IStateTransitionProvider, StateManager } from 'lib/state-manager';
 import { IState } from 'lib/state-manager/state';
 import { IStateProvider, StateProvider } from 'lib/state-manager/state-provider';
@@ -24,6 +25,7 @@ export const containerFactory = () => {
 	container.bind<IState>('state:initial').to(WelcomeState);
 	// rendering DOM
 	container.bind<HTMLElement>('ui:root').toConstantValue(document.getElementById('app') as HTMLElement);
+	container.bind<ReactRenderer>('ui:renderer').to(ReactRenderer);
 	// setup data store
 	container.bind<IAppState>('data-store:initial-state').toConstantValue({});
 	// container.bind<Subject<IAction>>('data-store:action-stream').toConstantValue(new Subject());
