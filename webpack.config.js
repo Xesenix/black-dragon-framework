@@ -29,7 +29,7 @@ module.exports = (env) => {
 		output: {
 			path: path.resolve('dist'),
 			publicPath: '/',
-			filename: isProd ? './js/[name].[chunkhash].js' : './js/[name].[hash].js'
+			filename: 'js/[name].[hash].js'
 		},
 		resolve: {
 			extensions: ['.ts', '.tsx', '.js', '.jsx'],

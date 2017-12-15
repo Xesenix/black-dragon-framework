@@ -28,9 +28,12 @@ export const containerFactory = () => {
 	container.bind<IAppState>('data-store:initial-state').toConstantValue({});
 	// container.bind<Subject<IAction>>('data-store:action-stream').toConstantValue(new Subject());
 	container.bind<Reducer<IAppState>>('data-store:action-reducer').toConstantValue(reducer);
-	container.bind<Reducer<IAppState>>('data-store:store-enhancer').toConstantValue(
-		window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-	);
+	if (process.env.NODE_ENV !== 'production') {
+		container.bind<Reducer<IAppState>>('data-store:store-enhancer')
+		.toConstantValue(
+			window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+		);
+	}
 	container.bind<DataStore<IAppState>>('data-store').to(DataStore);
 
 	return container;

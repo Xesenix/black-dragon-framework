@@ -4,13 +4,14 @@
 	"description": "Game creation framework - state management, dependency injection, entity system, interchangeable view renderers. On top of webpack typescript",
 	"main": "src/main.ts",
 	"scripts": {
-		"start": "webpack-dev-server --env.dev --progress --inline --hot",
+		"start": "npm run serve:dev",
 		"analyze": "webpack-bundle-analyzer dist/stats.json",
 		"lint": "tslint",
 		"test": "karma start",
 		"build:tsc": "tsc ./src/main.ts",
 		"build": "webpack --env.prod --progress",
-		"build:test": "webpack --env.test --progress"
+		"build:test": "webpack --env.test --progress",
+		"serve:dev": "webpack-dev-server --env.dev --progress --inline --hot"
 	},
 	"dependencies": {
 		"babel-polyfill": "^6.26.0",
