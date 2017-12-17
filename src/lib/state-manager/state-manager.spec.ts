@@ -1,14 +1,13 @@
 import { Container } from 'inversify';
-import { EmptyState, IState } from './state';
-import { IStateProvider, StateProvider } from './state-provider';
-import { IStateTransition, IStateTransitionProvider, StateManager } from './state-manager';
+import { timer } from 'rxjs/observable/timer';
 import { mapTo } from 'rxjs/operators/mapTo';
-import { ParallelTransition } from './transitions/parallel';
 import { take } from 'rxjs/operators/take';
 import { tap } from 'rxjs/operators/tap';
-import { timer } from 'rxjs/observable/timer';
+import { EmptyState, IState } from './state';
+import { IStateTransition, IStateTransitionProvider, StateManager } from './state-manager';
+import { IStateProvider, StateProvider } from './state-provider';
 import { TransitionProvider } from './transition-provider';
-// import { ConcatTransition } from './transitions/concat';
+import { ParallelTransition } from './transitions/parallel';
 
 class MockState extends EmptyState implements IState {
 	constructor(public name: string) {
@@ -61,8 +60,8 @@ describe('StateManager', () => {
 		it('should set current state to next state after finishing', (done) => {
 			const sm: StateManager = container.get<StateManager>(StateManager);
 			const currentState = sm.currentState$.getValue();
-			const nextStateKey = 'state:preload';
-			const nextState = container.get<IState>(nextStateKey);
+			const nextStateKey = 'preload';
+			const nextState = container.get<IState>(`state:${nextStateKey}`);
 			spyOn(currentState, 'leaveState').and.callThrough();
 			spyOn(nextState, 'enterState').and.callThrough();
 

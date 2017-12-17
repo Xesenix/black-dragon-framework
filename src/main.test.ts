@@ -4,7 +4,7 @@ declare const __karma__: any;
 declare const require: any;
 
 // Prevent Karma from running prematurely.
-__karma__.loaded = function() {};
+__karma__.loaded = () => ({});
 
 // Prepare root for attaching DOM components
 const placeholder = document.createElement('div');

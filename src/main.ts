@@ -9,4 +9,4 @@ window.onload = () => {
 	const uiStateManager = container.get<StateManager>('ui:state-manager');
 
 	uiStateManager.boot();
-}
+};

@@ -14,14 +14,17 @@
 		"serve:dev": "webpack-dev-server --env.dev --progress --inline --hot"
 	},
 	"dependencies": {
+		"@types/webfontloader": "^1.6.29",
 		"babel-polyfill": "^6.26.0",
+		"html-webpack-externals-plugin": "^3.6.0",
 		"inversify": "^4.6.0",
+		"phaser-ce": "^2.9.3",
 		"react": "^16.2.0",
 		"react-dom": "^16.2.0",
 		"redux": "^3.7.2",
 		"reflect-metadata": "^0.1.10",
 		"rxjs": "^5.5.5",
-		"webmanifest-loader": "^0.2.1",
+		"webfontloader": "^1.6.28",
 		"xes-rx-tween": "^0.1.0"
 	},
 	"devDependencies": {
@@ -52,9 +55,11 @@
 		"bootstrap-sass": "^3.3.7",
 		"clean-webpack-plugin": "^0.1.17",
 		"css-loader": "^0.28.7",
+		"exports-loader": "^0.6.4",
 		"extract-text-webpack-plugin": "^3.0.2",
 		"file-loader": "^1.1.5",
 		"html-webpack-plugin": "^2.30.1",
+		"imports-loader": "^0.7.1",
 		"jasmine": "^2.8.0",
 		"jasmine-core": "^2.8.0",
 		"karma": "^1.7.1",
@@ -76,6 +81,7 @@
 		"tslint-language-service": "^0.9.7",
 		"typescript": "^2.6.2",
 		"uglifyjs-webpack-plugin": "^1.1.2",
+		"webmanifest-loader": "^0.2.1",
 		"webpack": "^3.10.0",
 		"webpack-bundle-analyzer": "^2.9.1",
 		"webpack-dev-server": "^2.9.7",

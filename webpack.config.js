@@ -1,10 +1,11 @@
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin')
 const path = require('path');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = (env) => {
 	const isProd = !!env.prod;
@@ -19,16 +20,16 @@ module.exports = (env) => {
 	});
 
 	return {
-		context: path.resolve(__dirname, 'src'),
+		// context: path.resolve(__dirname, 'src'),
 		entry: {
 			app: [
 				'babel-polyfill',
-				'./main.ts'
+				'./src/main.ts'
 			],
 		},
 		output: {
 			path: path.resolve('dist'),
-			publicPath: '/',
+			publicPath: '',
 			filename: 'js/[name].[hash].js'
 		},
 		resolve: {
@@ -105,11 +106,13 @@ module.exports = (env) => {
 				},
 			]
 		},
-		/*externals: {
-			'react': 'React',
-			'react-dom': 'ReactDOM'
-		},*/
 		plugins: [
+			isProd ? new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				openAnalyzer: false,
+				statsFilename: path.resolve('./dist/stats.json'),
+				generateStatsFile: true
+			}) : null,
 			new webpack.EnvironmentPlugin({
 				NODE_ENV: isProd ? 'production' : isTest ? 'test' : 'development'
 			}),
@@ -123,11 +126,22 @@ module.exports = (env) => {
 				template: path.resolve('./src/index.html'),
 				minify: {
 					removeComments: true,
-					preserveLineBreaks: false
+					preserveLineBreaks: true
 				},
 				xhtml: false,
 				mobile: true,
 				showErrors: true
+			}),
+			new HtmlWebpackExternalsPlugin({
+				externals: [{
+					module: 'phaser-ce',
+					entry: {
+						path: 'build/custom/phaser-arcade-physics.min.js',
+						type: 'js',
+						global: 'Phaser'
+					},
+				}],
+				outputPath: 'js',
 			}),
 			extractCss,
 			extractSass,

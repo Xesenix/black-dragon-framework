@@ -1,15 +1,12 @@
-import { tap } from 'rxjs/operators/tap';
-import { IStateTransition, IStateTransitionStep } from './state-manager';
 import { inject, injectable } from 'inversify';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { from } from 'rxjs/observable/from';
-import { last } from 'rxjs/operators/last';
 import { switchMap } from 'rxjs/operators/switchMap';
 import { Subject } from 'rxjs/Subject';
 import { EmptyState, IState } from './state';
+import { IStateTransition, IStateTransitionStep } from './state-manager';
 import { IStateProvider } from './state-provider';
-
 export interface IStateTransitionStep { manager: StateManager; prev: IState; next: IState; }
 export type IStateTransition = Observable<IStateTransitionStep>;
 export type IStateTransitionProvider = (manager: StateManager, prev: IState, next: IState) => IStateTransition;
@@ -26,18 +23,34 @@ export class StateManager {
 	) { }
 
 	public boot(): Promise<IStateTransitionStep> {
-		return this.initialState.enterState(this.currentState$.getValue(), this).toPromise();
+		return this.initialState.enterState(this.currentState$.getValue(), this)
+			.toPromise()
+			.then((transition) => {
+				console.log('StateManager:bootState:finish');
+				this.currentState$.next(transition.next);
+				return transition;
+			}, (err) => {
+				console.error('BootStateError', err.message);
+				return err;
+			});
 	}
 
 	public changeState(nextStateKey: string): Promise<IStateTransitionStep> {
 		return from(this.stateProvider(nextStateKey)).pipe(
-			switchMap((nextState: IState): IStateTransition => this.stateTransitionProvider(
-				this,
-				this.currentState$.getValue(),
-				nextState,
-			)),
-			last(),
-			tap(({ next }) => this.currentState$.next(next)),
-		).toPromise();
+				switchMap((nextState: IState): IStateTransition => this.stateTransitionProvider(
+					this,
+					this.currentState$.getValue(),
+					nextState,
+				)),
+			)
+			.toPromise()
+			.then((transition) => {
+				console.log('StateManager:changeState:finish');
+				this.currentState$.next(transition.next);
+				return transition;
+			}, (err) => {
+				console.error('ChangeStateError', err.message);
+				return err;
+			});
 	}
 }
