@@ -10,7 +10,7 @@ export function StateProvider(context: interfaces.Context) {
 			const state = context.container.get<IState>(`state:${key}`);
 			return Promise.resolve(state);
 		} catch (error) {
-			console.debug('StateProvider:error', key);
+			console.debug('StateProvider:error', key, error);
 			return Promise.reject(error);
 		}
 	};

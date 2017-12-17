@@ -14,6 +14,7 @@ export type IStateTransitionProvider = (manager: StateManager, prev: IState, nex
 @injectable()
 export class StateManager {
 	public currentState$ = new BehaviorSubject<IState>(new EmptyState());
+	public currentStateName$ = new BehaviorSubject<string>('none');
 	public transition$ = new Subject();
 
 	public constructor(
@@ -23,19 +24,26 @@ export class StateManager {
 	) { }
 
 	public boot(): Promise<IStateTransitionStep> {
+		const transitionGroupName = `boot state: initial`;
+		console.group(transitionGroupName);
 		return this.initialState.enterState(this.currentState$.getValue(), this)
 			.toPromise()
 			.then((transition) => {
 				console.log('StateManager:bootState:finish');
+				console.groupEnd();
 				this.currentState$.next(transition.next);
+				this.currentStateName$.next('initial');
 				return transition;
 			}, (err) => {
 				console.error('BootStateError', err.message);
+				console.groupEnd();
 				return err;
 			});
 	}
 
 	public changeState(nextStateKey: string): Promise<IStateTransitionStep> {
+		const transitionGroupName = `change state: ${this.currentStateName$.getValue()} => ${nextStateKey}`;
+		console.group(transitionGroupName);
 		return from(this.stateProvider(nextStateKey)).pipe(
 				switchMap((nextState: IState): IStateTransition => this.stateTransitionProvider(
 					this,
@@ -45,11 +53,14 @@ export class StateManager {
 			)
 			.toPromise()
 			.then((transition) => {
-				console.log('StateManager:changeState:finish');
+				console.log('StateManager:changeState:finished');
+				console.groupEnd();
 				this.currentState$.next(transition.next);
+				this.currentStateName$.next(nextStateKey);
 				return transition;
 			}, (err) => {
-				console.error('ChangeStateError', err.message);
+				console.error('StateManager:changeState:error', err);
+				console.groupEnd();
 				return err;
 			});
 	}
