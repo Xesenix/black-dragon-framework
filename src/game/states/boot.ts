@@ -1,20 +1,17 @@
 import { EventEmitter } from 'events';
 import { inject, injectable } from 'inversify';
-import { IPhaserState } from 'lib/phaser/state';
+import { BaseState } from 'lib/phaser/state';
 
 export const PHASER_BOOT_STATE_INIT_EVENT = Symbol('BootState:init:event');
 export const PHASER_BOOT_STATE_PRELOAD_EVENT = Symbol('BootState:preload:event');
 export const PHASER_BOOT_STATE_SHUTDOWN_EVENT = Symbol('BootState:shutdown:event');
 
 @injectable()
-export class BootState implements IPhaserState {
-	private stage: any;
-	private game: any;
-	private load: any;
-
+export class BootState extends BaseState {
 	public constructor(
 		@inject('event-manager') private eventEmiter: EventEmitter,
 	) {
+		super();
 		console.debug('Phaser:BootState:constructor');
 	}
 
@@ -26,6 +23,8 @@ export class BootState implements IPhaserState {
 
 	public preload() {
 		console.debug('Phaser:BootState:preload');
+
+		this.game.stage.backgroundColor = '#ff0000';
 
 		// so that on first state application will progress regardless if there was player interaction or not
 		this.stage.disableVisibilityChange = true;

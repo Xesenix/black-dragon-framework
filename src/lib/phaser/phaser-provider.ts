@@ -1,12 +1,22 @@
 import { interfaces } from 'inversify';
 import { IPhaserState } from './state';
 
-export type IPhaserProvider = (parent: any) => Promise<IPhaserState>;
+let game: any = null;
+
+export type IPhaserProvider = (parent: any) => Promise<Phaser.Game>;
 
 export function PhaserProvider(context: interfaces.Context) {
 	console.debug('PhaserProvider');
-	return (parent: any): Promise<IPhaserState> => {
+	return (parent: any, forceNew: boolean = false): Promise<Phaser.Game> => {
 		console.debug('PhaserProvider:provide', parent);
+
+		if (!forceNew && game !== null) {
+			console.debug('PhaserProvider:swap parent', game);
+			parent.appendChild(game.canvas);
+
+			return Promise.resolve(game);
+		}
+
 		const antialias = false;
 		const disableWebAudio = true;
 		const width = 600;
@@ -19,7 +29,7 @@ export function PhaserProvider(context: interfaces.Context) {
 			disableWebAudio, // that bit is important for ram consumption (true == less ram consumption)
 		};
 
-		const game = new Phaser.Game({
+		game = new Phaser.Game({
 			antialias,
 			width,
 			height,
@@ -30,6 +40,7 @@ export function PhaserProvider(context: interfaces.Context) {
 		});
 
 		try {
+			console.debug('PhaserProvider:game', game);
 			game.state.add('boot', context.container.get<IPhaserState>('state:game/boot'));
 			return Promise.resolve(game);
 		} catch (error) {

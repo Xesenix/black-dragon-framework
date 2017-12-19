@@ -1,27 +1,37 @@
+import { IAppDataState } from 'app/reducer';
 import { EventEmitter } from 'events';
 import { PHASER_BOOT_STATE_INIT_EVENT } from 'game/states/boot';
 import { inject, injectable } from 'inversify';
+import { DataStore } from 'lib/data-store/data-store';
 import { IPhaserProvider } from 'lib/phaser/phaser-provider';
 import { ReactRenderer } from 'lib/renderer/react-renderer';
 import { EmptyState, IState, IStateTransition, StateManager } from 'lib/state-manager';
 import * as React from 'react';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { concat } from 'rxjs/observable/concat';
 import { defer } from 'rxjs/observable/defer';
+import { empty } from 'rxjs/observable/empty';
+import { of } from 'rxjs/observable/of';
+import { filter } from 'rxjs/operators/filter';
+import { first } from 'rxjs/operators/first';
 import { last } from 'rxjs/operators/last';
 import { mapTo } from 'rxjs/operators/mapTo';
 import { TweenObservable } from 'xes-rx-tween';
+import { GameView } from './view';
 
 @injectable()
 export class GameViewState extends EmptyState implements IState {
 	public readonly name = 'GameViewState';
+	public containerRef$: BehaviorSubject<any> = new BehaviorSubject(null);
 
-	private gameParent: HTMLElement;
+	private game: any;
 
 	public constructor(
-		@inject('ui:renderer') private renderer: ReactRenderer,
-		@inject('phaser:phaser-provider') private phaserProvider: IPhaserProvider,
+		@inject('data-store') private dataStore: DataStore<IAppDataState>,
 		@inject('event-manager') private eventManager: EventEmitter,
+		@inject('phaser:phaser-provider') private phaserProvider: IPhaserProvider,
+		@inject('ui:renderer') private renderer: ReactRenderer,
 	) { super(); }
 
 	public enterState(previousState: IState, manager: StateManager): IStateTransition {
@@ -37,35 +47,81 @@ export class GameViewState extends EmptyState implements IState {
 		);
 	}
 
+	public leaveState(nextState: IState, manager: StateManager): IStateTransition {
+		console.debug('WelcomeState:leaveState');
+		return concat(
+			defer(() => this.unloadState(manager)),
+			defer(() => this.cleanState(manager)),
+			of(true),
+		).pipe(
+			last(),
+			mapTo({ prev: this, next: nextState, manager }),
+		);
+	}
+
 	public createPreloader(manager: StateManager) {
+		console.debug('GameViewState:createPreloader');
 		this.renderer.setOutlet(<div>preloading...</div>, 'enter').render();
 		return TweenObservable.create(2000, 0, 100);
 	}
 
 	public cleanPreloader(manager: StateManager) {
-		return new Observable((observer) => {
-			this.renderer
-				.setOutlet(null, 'enter')
-				.setOutlet((<div>ready <a onClick={() => manager.changeState('initial')}>back</a>
-					<div ref={(el) => { this.gameParent = el as any; observer.complete(); }}></div>
-				</div>))
-				.render();
-		});
+		console.debug('GameViewState:cleanPreloader');
+		this.renderer
+			.setOutlet(null, 'enter')
+			.setOutlet((<GameView state={this} stateManager={manager} dataStore={this.dataStore} />))
+			.render();
+
+		return this.containerRef$.pipe(
+			filter((element) => !!element),
+			first(),
+		);
 	}
 
 	public create(manager: StateManager) {
-		return new Observable((observer) => {
-			this.phaserProvider(this.gameParent).then((game) => {
-				game.state.start('boot');
+		console.debug('GameViewState:create');
+		this.phaserProvider(this.containerRef$.getValue()).then((game) => {
+			this.game = game;
 
-				this.eventManager.once(PHASER_BOOT_STATE_INIT_EVENT, () => {
-					observer.complete();
-				});
+			this.game.state.start('boot');
+		});
+
+		return new Observable((observer) => {
+			this.eventManager.once(PHASER_BOOT_STATE_INIT_EVENT, () => {
+				observer.complete();
 			});
 		});
 	}
 
 	public loadState(manager: StateManager) {
+		console.debug('GameViewState:loadState');
 		return TweenObservable.create(1000, 0, 100);
+	}
+
+	private unloadState(manager: StateManager) {
+		console.debug('GameViewState:unloadState');
+
+		this.game.parent.removeChild(this.game.canvas);
+
+		this.renderer
+			.setOutlet(null)
+			.setOutlet(<GameView state={this} stateManager={manager} dataStore={this.dataStore} />, 'exit')
+			.render();
+
+		return empty();
+	}
+
+	private cleanState(manager: StateManager) {
+		console.debug('GameViewState:cleanState');
+
+		this.renderer
+			.setOutlet(null, 'exit')
+			.render();
+
+		this.dataStore.dispatch({
+			type: 'PRELOAD:COMPLETE',
+		});
+
+		return empty();
 	}
 }
