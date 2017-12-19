@@ -17,7 +17,7 @@ export interface IWelcomeViewState {
 }
 
 export class WelcomeView extends React.Component<IWelcomeViewProps, IWelcomeViewState> {
-	private subscription: Subscription;
+	private subscription: Subscription = new Subscription();
 
 	constructor(props: IWelcomeViewProps, context: any) {
 		super(props, context);
@@ -30,7 +30,6 @@ export class WelcomeView extends React.Component<IWelcomeViewProps, IWelcomeView
 
 	public componentDidMount() {
 		const { stateManager = null, dataStore = null } = this.props;
-		this.subscription = new Subscription();
 
 		if (dataStore !== null) {
 			this.subscription.add(dataStore.asObservable().pipe(
@@ -50,23 +49,21 @@ export class WelcomeView extends React.Component<IWelcomeViewProps, IWelcomeView
 	}
 
 	public componentWillUnmount() {
-		if (this.subscription) {
-			this.subscription.unsubscribe();
-		}
+		this.subscription.unsubscribe();
 	}
 
 	public render(): any {
 		const { currentState, preload } = this.state;
 		const { stateManager } = this.props;
 
-		const startButton = (<a onClick={ () => stateManager.changeState('game') }>Play</a>);
+		const startButton = (<a className="btn btn-primary" onClick={ () => stateManager.changeState('game') }>Play</a>);
 
-		return (<div>
-			Welcome
-			<br/>
-			{ currentState.name }
-			<br/>
-			{ preload.complete ? startButton : `${preload.description} ${preload.progress.toFixed(0)}%` }
+		return (<div className="panel panel-primary">
+			<div className="panel-heading">Welcome</div>
+			<div className="panel-body">{ currentState.name }</div>
+			<div className="panel-footer">
+				{ preload.complete ? startButton : `${preload.description} ${preload.progress.toFixed(0)}%` }
+			</div>
 		</div>);
 	}
 }

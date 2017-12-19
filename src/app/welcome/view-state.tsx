@@ -20,8 +20,8 @@ export class WelcomeViewState implements IState {
 	public readonly name = 'WelcomeViewState';
 
 	public constructor(
-		@inject('ui:renderer') private renderer: ReactRenderer,
 		@inject('data-store') private dataStore: DataStore<IAppDataState>,
+		@inject('ui:renderer') private renderer: ReactRenderer,
 	) { }
 
 	public enterState(previousState: IState, manager: StateManager): IStateTransition {
@@ -40,7 +40,18 @@ export class WelcomeViewState implements IState {
 		);
 	}
 
-	public createPreloader(manager: StateManager) {
+	public leaveState(nextState: IState, manager: StateManager): IStateTransition {
+		console.debug('WelcomeState:leaveState');
+		return concat(
+			defer(() => this.unloadState(manager)),
+			defer(() => this.cleanState(manager)),
+		).pipe(
+			last(),
+			mapTo({ prev: this, next: nextState, manager }),
+		);
+	}
+
+	private createPreloader(manager: StateManager) {
 		console.debug('WelcomeState:createPreloader');
 		this.renderer
 			.setOutlet(<WelcomeView stateManager={manager} dataStore={this.dataStore} />, 'enter')
@@ -54,7 +65,7 @@ export class WelcomeViewState implements IState {
 		);
 	}
 
-	public loadState() {
+	private loadState() {
 		console.debug('WelcomeState:loadState');
 		return TweenObservable.create(2000, 0, 100).pipe(
 			tap((progress) => this.dataStore.dispatch({
@@ -64,14 +75,14 @@ export class WelcomeViewState implements IState {
 		);
 	}
 
-	public cleanPreloader(manager: StateManager) {
+	private cleanPreloader(manager: StateManager) {
 		console.debug('WelcomeState:cleanPreloader');
 		this.renderer.setOutlet(null, 'enter');
 
 		return empty();
 	}
 
-	public create(manager: StateManager) {
+	private create(manager: StateManager) {
 		console.debug('WelcomeState:create');
 		this.renderer
 			.setOutlet(<WelcomeView stateManager={manager} dataStore={this.dataStore} />)
@@ -80,18 +91,7 @@ export class WelcomeViewState implements IState {
 		return empty();
 	}
 
-	public leaveState(nextState: IState, manager: StateManager): IStateTransition {
-		console.debug('WelcomeState:leaveState');
-		return concat(
-			defer(() => this.unloadState(manager)),
-			defer(() => this.cleanState(manager)),
-		).pipe(
-			last(),
-			mapTo({ prev: this, next: nextState, manager }),
-		);
-	}
-
-	public unloadState(manager: StateManager) {
+	private unloadState(manager: StateManager) {
 		console.debug('WelcomeState:unloadState');
 
 		this.renderer
@@ -113,7 +113,7 @@ export class WelcomeViewState implements IState {
 		);
 	}
 
-	public cleanState(manager: StateManager) {
+	private cleanState(manager: StateManager) {
 		console.debug('WelcomeState:cleanState');
 
 		this.renderer

@@ -16,6 +16,8 @@ import { ParallelTransition } from 'lib/state-manager/transitions/parallel';
 import { Reducer } from 'redux';
 import { IAppDataState, reducer } from './reducer';
 
+import 'styles/main.scss';
+
 export const containerFactory = () => {
 	const container = new Container();
 
@@ -47,9 +49,9 @@ export const containerFactory = () => {
 	container.bind<Reducer<IAppDataState>>('data-store:action-reducer').toConstantValue(reducer);
 	if (process.env.NODE_ENV !== 'production') {
 		container.bind<Reducer<IAppDataState>>('data-store:store-enhancer')
-		.toConstantValue(
-			window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-		);
+			.toConstantValue(
+				window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+			);
 	}
 	container.bind<DataStore<IAppDataState>>('data-store').to(DataStore).inSingletonScope();
 
