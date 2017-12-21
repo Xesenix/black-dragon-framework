@@ -22,7 +22,6 @@ import { GameView } from './view';
 
 @injectable()
 export class GameViewState extends EmptyState implements IState {
-	public readonly name = 'GameViewState';
 	public containerRef$: BehaviorSubject<any> = new BehaviorSubject(null);
 
 	private game: any;

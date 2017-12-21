@@ -13,6 +13,7 @@ export function PhaserProvider(context: interfaces.Context) {
 		if (!forceNew && game !== null) {
 			console.debug('PhaserProvider:swap parent', game);
 			parent.appendChild(game.canvas);
+			game.parent = parent;
 
 			return Promise.resolve(game);
 		}
@@ -41,7 +42,12 @@ export function PhaserProvider(context: interfaces.Context) {
 
 		try {
 			console.debug('PhaserProvider:game', game);
-			game.state.add('boot', context.container.get<IPhaserState>('state:game/boot'));
+			const states = context.container.get<string[]>('phaser:states');
+
+			states.forEach((key) => {
+				game.state.add('boot', context.container.getTagged<IPhaserState>(key, 'engine', 'phaser'));
+			});
+
 			return Promise.resolve(game);
 		} catch (error) {
 			console.debug('PhaserProvider:error', parent, error);

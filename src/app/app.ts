@@ -2,6 +2,8 @@ import { GameViewState } from 'app/game/view-state';
 import { WelcomeViewState } from 'app/welcome/view-state';
 import { EventEmitter } from 'events';
 import { BootState } from 'game/states/boot';
+// import { MenuState } from 'game/states/menu';
+import { PreloadState } from 'game/states/preload';
 import { Container } from 'inversify';
 import { DataStore } from 'lib/data-store/data-store';
 import { IPhaserProvider, PhaserProvider } from 'lib/phaser/phaser-provider';
@@ -38,7 +40,14 @@ export const containerFactory = () => {
 	container.bind<IState>('state:game').to(GameViewState);
 
 	// phaser game states
-	container.bind<IPhaserState>('state:game/boot').to(BootState);
+	container.bind<IPhaserState>('state:game/boot').to(BootState).whenTargetTagged('engine', 'phaser');
+	container.bind<IPhaserState>('state:game/preload').to(PreloadState).whenTargetTagged('engine', 'phaser');
+	// container.bind<IPhaserState>('state:game/menu').to(MenuState).whenTargetTagged('engine', 'phaser');
+
+	container.bind<string[]>('phaser:states').toConstantValue([
+		'state:game/boot',
+		'state:game/preload',
+	]);
 
 	// rendering DOM
 	container.bind<HTMLElement>('ui:root').toConstantValue(document.getElementById('app') as HTMLElement);
