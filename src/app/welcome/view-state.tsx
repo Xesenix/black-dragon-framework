@@ -2,9 +2,8 @@ import { IAppDataState } from 'app/reducer';
 import { inject, injectable } from 'inversify';
 import { DataStore } from 'lib/data-store/data-store';
 import { ReactRenderer } from 'lib/renderer/react-renderer';
-import { IState } from 'lib/state-manager/state';
-import { StateManager } from 'lib/state-manager/state-manager';
-import { IStateTransition } from 'lib/state-manager/state-manager';
+import { EmptyState, IState } from 'lib/state-manager/state';
+import { IStateTransition, StateManager } from 'lib/state-manager/state-manager';
 import * as React from 'react';
 import { concat } from 'rxjs/observable/concat';
 import { defer } from 'rxjs/observable/defer';
@@ -16,19 +15,17 @@ import { TweenObservable } from 'xes-rx-tween';
 import { WelcomeView } from './view';
 
 @injectable()
-export class WelcomeViewState implements IState {
-	public readonly name = 'WelcomeViewState';
-
+export class WelcomeViewState extends EmptyState implements IState {
 	public constructor(
 		@inject('data-store') private dataStore: DataStore<IAppDataState>,
 		@inject('ui:renderer') private renderer: ReactRenderer,
-	) { }
+	) { super(); }
 
 	public enterState(previousState: IState, manager: StateManager): IStateTransition {
 		console.debug('WelcomeState:enterState');
 		return concat(
 			defer(() => this.createPreloader(manager)),
-			defer(() => this.loadState()),
+			defer(() => this.loadState(manager)),
 			defer(() => this.cleanPreloader(manager)),
 			defer(() => this.create(manager)),
 		).pipe(
@@ -65,7 +62,7 @@ export class WelcomeViewState implements IState {
 		);
 	}
 
-	private loadState() {
+	private loadState(manager: StateManager) {
 		console.debug('WelcomeState:loadState');
 		return TweenObservable.create(2000, 0, 100).pipe(
 			tap((progress) => this.dataStore.dispatch({

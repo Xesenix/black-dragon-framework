@@ -9,12 +9,8 @@ import { DataStore } from 'lib/data-store/data-store';
 import { IPhaserProvider, PhaserProvider } from 'lib/phaser/phaser-provider';
 import { IPhaserState } from 'lib/phaser/state';
 import { ReactRenderer } from 'lib/renderer/react-renderer';
-import { IStateTransitionProvider, StateManager } from 'lib/state-manager';
+import { StateManagerModule } from 'lib/state-manager/module';
 import { IState } from 'lib/state-manager/state';
-import { IStateProvider, StateProvider } from 'lib/state-manager/state-provider';
-import { TransitionProvider } from 'lib/state-manager/transition-provider';
-// import { ConcatTransition } from 'lib/state-manager/transitions/concat';
-import { ParallelTransition } from 'lib/state-manager/transitions/parallel';
 import { Reducer } from 'redux';
 import { IAppDataState, reducer } from './reducer';
 
@@ -30,10 +26,7 @@ export const containerFactory = () => {
 	container.bind<IPhaserProvider>('phaser:phaser-provider').toProvider(PhaserProvider);
 
 	// state management
-	container.bind<IStateProvider>('state:state-provider').toProvider(StateProvider);
-	container.bind<IStateTransitionProvider>('state:transition:default-transition').toConstantValue(ParallelTransition);
-	container.bind<IStateTransitionProvider>('state:transition:provider').toFactory(TransitionProvider);
-	container.bind<StateManager>('ui:state-manager').to(StateManager);
+	container.load(StateManagerModule);
 
 	// app view states
 	container.bind<IState>('state:initial').to(WelcomeViewState);
