@@ -45,7 +45,7 @@ export function PhaserProvider(context: interfaces.Context) {
 			const states = context.container.get<string[]>('phaser:states');
 
 			states.forEach((key) => {
-				game.state.add('boot', context.container.getTagged<IPhaserState>(key, 'engine', 'phaser'));
+				game.state.add(key, context.container.getTagged<IPhaserState>(key, 'engine', 'phaser'));
 			});
 
 			return Promise.resolve(game);

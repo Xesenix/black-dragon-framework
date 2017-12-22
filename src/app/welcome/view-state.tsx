@@ -1,5 +1,5 @@
 import { IAppDataState } from 'app/reducer';
-import { inject, injectable } from 'inversify';
+import { inject, injectable, tagged } from 'inversify';
 import { DataStore } from 'lib/data-store/data-store';
 import { ReactRenderer } from 'lib/renderer/react-renderer';
 import { EmptyState, IState } from 'lib/state-manager/state';
@@ -18,7 +18,7 @@ import { WelcomeView } from './view';
 export class WelcomeViewState extends EmptyState implements IState {
 	public constructor(
 		@inject('data-store') private dataStore: DataStore<IAppDataState>,
-		@inject('ui:renderer') private renderer: ReactRenderer,
+		@inject('ui:renderer') @tagged('engine', 'react') private renderer: ReactRenderer,
 	) { super(); }
 
 	public enterState(previousState: IState, manager: StateManager): IStateTransition {

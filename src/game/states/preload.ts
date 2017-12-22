@@ -6,13 +6,13 @@ export class PreloadState extends BaseState {
 	private asset: any;
 
 	public init() {
-		// console.log('PreloadState:init')
+		console.debug('Phaser:PreloadState:init');
 
 		this.asset = null;
 	}
 
 	public preload() {
-		// console.log('PreloadState:preload')
+		console.debug('Phaser:PreloadState:preload');
 		this.asset = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'preloader');
 		this.asset.anchor.setTo(0.5, 0.5);
 
@@ -86,17 +86,17 @@ export class PreloadState extends BaseState {
 			'tentacles01',
 			'tentacles02',
 			'court',
-			'claudron'
+			'claudron',
 		]);
 	}
 
 	public create() {
-		// console.log('PreloadState:create')
-		this.asset.cropEnabled = false
+		console.debug('Phaser:PreloadState:create');
+		this.asset.cropEnabled = false;
 	}
 
 	public onLoadComplete() {
-		// console.log('PreloadState:onLoadComplete')
+		console.debug('Phaser:PreloadState:onLoadComplete');
 		this.game.state.start('intro');
 	}
 }

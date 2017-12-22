@@ -23,7 +23,6 @@ export class StateManager {
 	}>();
 
 	public constructor(
-		@inject('state:initial') private initialState: IState,
 		@inject('state:state-provider') private stateProvider: IStateProvider,
 		@inject('state:transition:provider') private stateTransitionProvider: IStateTransitionProvider,
 	) {
@@ -58,24 +57,25 @@ export class StateManager {
 					share(),
 				);
 			}),
-		).subscribe((x) => console.log('StateManager === transition', x));
+		).subscribe();
 	}
 
 	public boot(): Promise<IStateTransitionStep> {
 		const transitionGroupName = `boot state: initial`;
 		console.group(transitionGroupName);
-		return this.initialState.enterState(this.currentState$.getValue(), this)
-			.toPromise()
-			.then((transition) => {
-				console.log('StateManager:bootState:finish');
-				console.groupEnd();
-				this.currentState$.next(transition.next);
-				return transition;
-			}, (err) => {
-				console.error('BootStateError', err.message);
-				console.groupEnd();
-				return err;
-			});
+		return this.stateProvider('initial').then(
+			(state) => state.enterState(this.currentState$.getValue(), this).toPromise(),
+		)
+		.then((transition) => {
+			console.log('StateManager:bootState:finish', transition);
+			console.groupEnd();
+			this.currentState$.next(transition.next);
+			return transition;
+		}, (err) => {
+			console.error('BootStateError', err.message);
+			console.groupEnd();
+			return err;
+		});
 	}
 
 	public changeState(nextStateKey: string): Promise<IStateTransitionStep> {

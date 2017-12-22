@@ -10,7 +10,7 @@ export interface IState {
 
 @injectable()
 export class EmptyState implements IState {
-	public $$key: string;
+	public $$key: string = 'empty';
 
 	public enterState(previousState: IState, manager: StateManager): IStateTransition {
 		return of({ prev: previousState, next: this, manager });

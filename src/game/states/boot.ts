@@ -30,7 +30,7 @@ export class BootState extends BaseState {
 		this.stage.disableVisibilityChange = true;
 		this.game.time.advancedTiming = true; // for fps counter
 		this.game.time.desiredFps = 30;
-		this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.NO_SCALE; //SHOW_ALL, NO_SCALE, EXACT_FIT, RESIZE
+		this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.NO_SCALE; // SHOW_ALL, NO_SCALE, EXACT_FIT, RESIZE
 		this.game.clearBeforeRender = false; // if your game contains full background
 
 		this.load.onLoadStart.add(() => {

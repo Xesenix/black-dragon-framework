@@ -79,14 +79,16 @@ export class GameViewState extends EmptyState implements IState {
 
 	public create(manager: StateManager) {
 		console.debug('GameViewState:create');
+		console.group('GameViewState:create:get phaser');
 		this.phaserProvider(this.containerRef$.getValue()).then((game) => {
 			this.game = game;
 
-			this.game.state.start('boot');
+			this.game.state.start('state:game/boot');
 		});
 
 		return new Observable((observer) => {
 			this.eventManager.once(PHASER_BOOT_STATE_INIT_EVENT, () => {
+				console.groupEnd();
 				observer.complete();
 			});
 		});
