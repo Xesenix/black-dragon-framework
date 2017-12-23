@@ -8,7 +8,7 @@
 		"analyze": "webpack-bundle-analyzer dist/stats.json",
 		"lint": "tslint",
 		"test": "karma start",
-		"build:tsc": "tsc ./src/main.ts",
+		"build:tsc": "tsc ./src/main.ts -p jsconfig.json",
 		"build": "webpack --env.prod --progress",
 		"build:test": "webpack --env.test --progress",
 		"serve:dev": "webpack-dev-server --env.dev --progress --inline --hot"
@@ -30,6 +30,7 @@
 	"devDependencies": {
 		"@types/babel-core": "^6.25.3",
 		"@types/clean-webpack-plugin": "^0.1.0",
+		"@types/copy-webpack-plugin": "^4.0.1",
 		"@types/es6-promise": "0.0.33",
 		"@types/extract-text-webpack-plugin": "^3.0.0",
 		"@types/html-webpack-plugin": "^2.30.1",
@@ -54,6 +55,7 @@
 		"babel-preset-stage-2": "^6.24.1",
 		"bootstrap-sass": "^3.3.7",
 		"clean-webpack-plugin": "^0.1.17",
+		"copy-webpack-plugin": "^4.3.0",
 		"css-loader": "^0.28.7",
 		"exports-loader": "^0.6.4",
 		"extract-text-webpack-plugin": "^3.0.2",

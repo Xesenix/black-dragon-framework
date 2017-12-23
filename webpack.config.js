@@ -1,5 +1,6 @@
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin')
@@ -28,7 +29,7 @@ module.exports = (env) => {
 			],
 		},
 		output: {
-			path: path.resolve('dist'),
+			path: isProd ? path.resolve(__dirname, 'dist') : path.resolve(__dirname, 'public'),
 			publicPath: '',
 			filename: 'js/[name].[hash].js'
 		},
@@ -64,7 +65,7 @@ module.exports = (env) => {
 						fallback: 'style-loader',
 						use: [
 							'css-loader',
-							'resolve-url-loader',
+							// 'resolve-url-loader',
 						]
 					})
 				},
@@ -74,7 +75,7 @@ module.exports = (env) => {
 						fallback: 'style-loader',
 						use: [
 							'css-loader',
-							'resolve-url-loader',
+							// 'resolve-url-loader',
 							'sass-loader',
 						]
 					})
@@ -89,7 +90,7 @@ module.exports = (env) => {
 						loader: 'file-loader',
 						options: {
 							name: '[name].[ext]',
-							outputPath: 'assets/fonts/'
+							outputPath: 'fonts/'
 						}
 					}]
 				},
@@ -100,11 +101,19 @@ module.exports = (env) => {
 						options: {
 							name: '[path][name].[ext]',
 							context: path.resolve(__dirname, 'src/assets'), // root for path
-							outputPath: 'assets/images/'
+							outputPath: 'assets/'
 						}
 					}]
 				},
 			]
+		},
+		externals: {
+			'phaser-ce': 'Phaser'
+		},
+		devServer: {
+			hot: true,
+			contentBase: path.resolve('public/'),
+			inline: true
 		},
 		plugins: [
 			isProd ? new BundleAnalyzerPlugin({
@@ -132,17 +141,14 @@ module.exports = (env) => {
 				mobile: true,
 				showErrors: true
 			}),
-			new HtmlWebpackExternalsPlugin({
-				externals: [{
-					module: 'phaser-ce',
-					entry: {
-						path: 'build/custom/phaser-arcade-physics.min.js',
-						type: 'js',
-						global: 'Phaser'
-					},
-				}],
-				outputPath: 'js',
-			}),
+			new CopyWebpackPlugin([{
+				from: path.resolve(__dirname, 'node_modules/phaser-ce/build/custom/phaser-arcade-physics.min.js'),
+				to: path.resolve(__dirname, 'public/js/phaser.js')
+			}]),
+			isProd ? new CopyWebpackPlugin([{
+				from: path.resolve(__dirname, 'public'),
+				to: path.resolve(__dirname, 'dist')
+			}]) : null,
 			extractCss,
 			extractSass,
 			isTest ? null : new webpack.optimize.CommonsChunkPlugin({

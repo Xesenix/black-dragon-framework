@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"module": "es6",
+		"target": "es2017",
+		"checkJs": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
+		"baseUrl": ".",
+		"paths": {
+			"app/*": ["./src/app/*"],
+			"lib/*": ["./src/lib/*"],
+			"game/*": ["./src/game/*"],
+			"*": ["./src/*"]
+		}
+	},
+	"exclude": [
+		"node_modules",
+		"public",
+		"dist"
+	]
+}

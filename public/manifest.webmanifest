@@ -1,0 +1,32 @@
+{
+  "lang": "en",
+  "dir": "ltr",
+  "name": "Hell Tower",
+  "description": "Hell tower build simulator",
+  "short_name": "HellTower",
+  "icons": [{
+    "src": "assets/icons/favicon.gif",
+    "sizes": "16x16"
+  }, {
+    "src": "assets/icons/lowres.png",
+    "sizes": "64x64"
+  }, {
+    "src": "assets/icons/hires.png",
+    "sizes": "512x512"
+  }],
+  "scope": "/public/",
+  "start_url": "/public/index.html",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "theme_color": "black",
+  "background_color": "black",
+  "screenshots": [{
+    "src": "assets/screenshots/in-game-1x.jpg",
+    "sizes": "640x480",
+    "type": "image/jpeg"
+  },{
+    "src": "assets/screenshots/in-game-2x.jpg",
+    "sizes": "1280x920",
+    "type": "image/jpeg"
+  }]
+}
