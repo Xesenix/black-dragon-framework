@@ -20,11 +20,13 @@ import { mapTo } from 'rxjs/operators/mapTo';
 import { TweenObservable } from 'xes-rx-tween';
 import { GameView } from './view';
 
+import 'phaser-ce';
+
 @injectable()
 export class GameViewState extends EmptyState implements IState {
 	public containerRef$: BehaviorSubject<any> = new BehaviorSubject(null);
 
-	private game: any;
+	private game: Phaser.Game;
 
 	public constructor(
 		@inject('data-store') private dataStore: DataStore<IAppDataState>,
@@ -80,16 +82,23 @@ export class GameViewState extends EmptyState implements IState {
 	public create(manager: StateManager) {
 		console.debug('GameViewState:create');
 		console.group('GameViewState:create:get phaser');
-		this.phaserProvider(this.containerRef$.getValue()).then((game) => {
-			this.game = game;
-
-			this.game.state.start('state:game/boot');
-		});
 
 		return new Observable((observer) => {
-			this.eventManager.once(PHASER_BOOT_STATE_INIT_EVENT, () => {
-				console.groupEnd();
-				observer.complete();
+			this.phaserProvider(this.containerRef$.getValue()).then((game) => {
+				this.game = game;
+				if (!this.game.isBooted) {
+					// if game wasen't started yet
+					this.game.state.start('state:game/boot');
+
+					this.eventManager.once(PHASER_BOOT_STATE_INIT_EVENT, () => {
+						console.groupEnd();
+						observer.complete();
+					});
+				} else {
+					// if game was started and we are resuming
+					this.game.paused = false;
+					observer.complete();
+				}
 			});
 		});
 	}
@@ -102,6 +111,7 @@ export class GameViewState extends EmptyState implements IState {
 	private unloadState(manager: StateManager) {
 		console.debug('GameViewState:unloadState');
 
+		this.game.paused = true;
 		this.game.parent.removeChild(this.game.canvas);
 
 		this.renderer

@@ -60,7 +60,9 @@ export class WelcomeView extends React.Component<IWelcomeViewProps, IWelcomeView
 
 		return (<div className="panel panel-primary">
 			<div className="panel-heading">Welcome</div>
-			<div className="panel-body">{ currentState.name }</div>
+			<div className="panel-body">{ currentState.name }
+				<img src={require('assets/preloader/banner.png')}/>
+			</div>
 			<div className="panel-footer">
 				{ preload.complete ? startButton : `${preload.description} ${preload.progress.toFixed(0)}%` }
 			</div>
