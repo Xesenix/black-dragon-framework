@@ -8,7 +8,7 @@
 		"analyze": "webpack-bundle-analyzer dist/stats.json",
 		"lint": "tslint",
 		"test": "karma start",
-		"build:tsc": "tsc ./src/main.ts -p jsconfig.json",
+		"build:tsc": "tsc -p tsconfig.json",
 		"build": "webpack --env.prod --progress",
 		"build:test": "webpack --env.test --progress",
 		"serve:dev": "webpack-dev-server --env.dev --progress --inline --hot"
