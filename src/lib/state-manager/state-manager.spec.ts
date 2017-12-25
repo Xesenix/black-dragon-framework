@@ -2,7 +2,7 @@ import { Container } from 'inversify';
 import { timer } from 'rxjs/observable/timer';
 import { mapTo } from 'rxjs/operators/mapTo';
 import { take } from 'rxjs/operators/take';
-import { tap } from 'rxjs/operators/tap';
+// import { tap } from 'rxjs/operators/tap';
 import { EmptyState, IState } from './state';
 import { IStateTransition, IStateTransitionProvider, StateManager } from './state-manager';
 import { IStateProvider, StateProvider } from './state-provider';
@@ -14,21 +14,21 @@ class MockState extends EmptyState implements IState {
 		super();
 	}
 
-	public leaveState(nextState: IState, manager: StateManager): IStateTransition {
-		console.debug(`MockState:leaveState: ${this.name}`);
+	public leaveState(nextState: IState, manager: StateManager, context: any = {}): IStateTransition {
+		// console.debug(`MockState:leaveState: ${this.name}`);
 		return timer(0, 100).pipe(
-			tap((x) => console.debug(`MockState:leaving ${this.name}: ${x}`)),
+			// tap((x) => console.debug(`MockState:leaving ${this.name}: ${x}`)),
 			take(10),
-			mapTo({ prev: (this as IState), next: nextState, manager }),
+			mapTo({ prev: (this as IState), next: nextState, manager, context }),
 		);
 	}
 
-	public enterState(previousState: IState, manager: StateManager): IStateTransition {
-		console.debug(`MockState:enterState: ${this.name}`);
+	public enterState(previousState: IState, manager: StateManager, context: any = {}): IStateTransition {
+		// console.debug(`MockState:enterState: ${this.name}`);
 		return timer(0, 100).pipe(
-			tap((x) => console.debug(`MockState:entering ${this.name}: ${x}`)),
+			// tap((x) => console.debug(`MockState:entering ${this.name}: ${x}`)),
 			take(5),
-			mapTo({ prev: previousState, next: (this as IState), manager }),
+			mapTo({ prev: previousState, next: (this as IState), manager, context }),
 		);
 	}
 }

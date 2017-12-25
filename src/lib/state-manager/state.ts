@@ -4,19 +4,19 @@ import { IStateTransition, StateManager } from './index';
 
 export interface IState {
 	$$key: string;
-	leaveState(nextState: IState, manager: StateManager): IStateTransition;
-	enterState(previousState: IState, manager: StateManager): IStateTransition;
+	leaveState(nextState: IState, manager: StateManager, context?: any): IStateTransition;
+	enterState(previousState: IState, manager: StateManager, context?: any): IStateTransition;
 }
 
 @injectable()
 export class EmptyState implements IState {
 	public $$key: string = 'empty';
 
-	public enterState(previousState: IState, manager: StateManager): IStateTransition {
-		return of({ prev: previousState, next: this, manager });
+	public enterState(previousState: IState, manager: StateManager, context: any = {}): IStateTransition {
+		return of({ prev: previousState, next: this, manager, context });
 	}
 
-	public leaveState(nextState: IState, manager: StateManager): IStateTransition {
-		return of({ prev: this, next: nextState, manager });
+	public leaveState(nextState: IState, manager: StateManager, context: any = {}): IStateTransition {
+		return of({ prev: this, next: nextState, manager, context });
 	}
 }

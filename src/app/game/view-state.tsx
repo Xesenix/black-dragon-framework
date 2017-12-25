@@ -3,6 +3,7 @@ import { EventEmitter } from 'events';
 import { PHASER_BOOT_STATE_INIT_EVENT } from 'game/states/boot';
 import { inject, injectable } from 'inversify';
 import { DataStore } from 'lib/data-store/data-store';
+import { Game } from 'lib/phaser/game';
 import { IPhaserProvider } from 'lib/phaser/phaser-provider';
 import { ReactRenderer } from 'lib/renderer/react-renderer';
 import { EmptyState, IState, IStateTransition, StateManager } from 'lib/state-manager';
@@ -17,6 +18,7 @@ import { filter } from 'rxjs/operators/filter';
 import { first } from 'rxjs/operators/first';
 import { last } from 'rxjs/operators/last';
 import { mapTo } from 'rxjs/operators/mapTo';
+import { tap } from 'rxjs/operators/tap';
 import { TweenObservable } from 'xes-rx-tween';
 import { GameView } from './view';
 
@@ -26,7 +28,9 @@ import 'phaser-ce';
 export class GameViewState extends EmptyState implements IState {
 	public containerRef$: BehaviorSubject<any> = new BehaviorSubject(null);
 
-	private game: Phaser.Game;
+	private context: any;
+
+	private game: Game;
 
 	public constructor(
 		@inject('data-store') private dataStore: DataStore<IAppDataState>,
@@ -35,38 +39,65 @@ export class GameViewState extends EmptyState implements IState {
 		@inject('ui:renderer') private renderer: ReactRenderer,
 	) { super(); }
 
-	public enterState(previousState: IState, manager: StateManager): IStateTransition {
+	public enterState(previousState: IState, manager: StateManager, context: any): IStateTransition {
 		console.debug('GameViewState:enterState');
-		return concat(
-			defer(() => this.createPreloader(manager)),
-			defer(() => this.loadState(manager)),
-			defer(() => this.cleanPreloader(manager)),
-			defer(() => this.create(manager)),
-		).pipe(
-			last(),
-			mapTo({ prev: previousState, next: this, manager }),
-		);
-	}
 
-	public leaveState(nextState: IState, manager: StateManager): IStateTransition {
-		console.debug('WelcomeState:leaveState');
+		// if nothing changed
+		if (previousState === this && this.context === context) {
+			return of({ prev: previousState, next: this, manager, context });
+		}
+
+		this.context = context;
+
 		return concat(
-			defer(() => this.unloadState(manager)),
-			defer(() => this.cleanState(manager)),
+			defer(() => this.createPreloader(manager, context)),
+			defer(() => this.loadState(manager, context)),
+			defer(() => this.cleanPreloader(manager, context)),
+			defer(() => this.create(manager, context)),
 			of(true),
 		).pipe(
 			last(),
-			mapTo({ prev: this, next: nextState, manager }),
+			mapTo({ prev: previousState, next: this, manager, context }),
 		);
 	}
 
-	public createPreloader(manager: StateManager) {
-		console.debug('GameViewState:createPreloader');
-		this.renderer.setOutlet(<div>preloading...</div>, 'enter').render();
-		return TweenObservable.create(2000, 0, 100);
+	public leaveState(nextState: IState, manager: StateManager, context: any): IStateTransition {
+		this.context = context;
+		console.debug('WelcomeState:leaveState');
+		if (nextState === this) {
+			return of({ prev: this, next: nextState, manager, context });
+		}
+		return concat(
+			defer(() => this.unloadState(manager, context)),
+			defer(() => this.cleanState(manager, context)),
+			of(true),
+		).pipe(
+			last(),
+			mapTo({ prev: this, next: nextState, manager, context }),
+		);
 	}
 
-	public cleanPreloader(manager: StateManager) {
+	public createPreloader(manager: StateManager, context: any) {
+		console.debug('GameViewState:createPreloader');
+
+		this.dataStore.dispatch({
+			type: 'PRELOAD:SET_PROGRESS',
+			payload: { namespace: 'game:assets', progress: 0, description: 'creating' },
+		});
+
+		this.renderer
+			.setOutlet(<GameView state={this} stateManager={manager} dataStore={this.dataStore} />, 'enter')
+			.render();
+
+		return TweenObservable.create(2000, 0, 100).pipe(
+			tap((progress) => this.dataStore.dispatch({
+				type: 'PRELOAD:SET_PROGRESS',
+				payload: { namespace: 'game:assets', progress, description: 'creating' },
+			})),
+		);
+	}
+
+	public cleanPreloader(manager: StateManager, context: any) {
 		console.debug('GameViewState:cleanPreloader');
 		this.renderer
 			.setOutlet(null, 'enter')
@@ -79,7 +110,7 @@ export class GameViewState extends EmptyState implements IState {
 		);
 	}
 
-	public create(manager: StateManager) {
+	public create(manager: StateManager, context: any) {
 		console.debug('GameViewState:create');
 		console.group('GameViewState:create:get phaser');
 
@@ -103,12 +134,17 @@ export class GameViewState extends EmptyState implements IState {
 		});
 	}
 
-	public loadState(manager: StateManager) {
+	public loadState(manager: StateManager, context: any) {
 		console.debug('GameViewState:loadState');
-		return TweenObservable.create(1000, 0, 100);
+		return TweenObservable.create(1000, 0, 100).pipe(
+			tap((progress) => this.dataStore.dispatch({
+				type: 'PRELOAD:SET_PROGRESS',
+				payload: { namespace: 'game:assets', progress, description: 'loading' },
+			})),
+		);
 	}
 
-	private unloadState(manager: StateManager) {
+	private unloadState(manager: StateManager, context: any) {
 		console.debug('GameViewState:unloadState');
 
 		this.game.paused = true;
@@ -122,7 +158,7 @@ export class GameViewState extends EmptyState implements IState {
 		return empty();
 	}
 
-	private cleanState(manager: StateManager) {
+	private cleanState(manager: StateManager, context: any) {
 		console.debug('GameViewState:cleanState');
 
 		this.renderer
@@ -131,6 +167,7 @@ export class GameViewState extends EmptyState implements IState {
 
 		this.dataStore.dispatch({
 			type: 'PRELOAD:COMPLETE',
+			payload: { namespace: 'game:assets', },
 		});
 
 		return empty();

@@ -8,6 +8,7 @@ import * as React from 'react';
 import { concat } from 'rxjs/observable/concat';
 import { defer } from 'rxjs/observable/defer';
 import { empty } from 'rxjs/observable/empty';
+import { of } from 'rxjs/observable/of';
 import { last } from 'rxjs/operators/last';
 import { mapTo } from 'rxjs/operators/mapTo';
 import { tap } from 'rxjs/operators/tap';
@@ -21,30 +22,33 @@ export class WelcomeViewState extends EmptyState implements IState {
 		@inject('ui:renderer') @tagged('engine', 'react') private renderer: ReactRenderer,
 	) { super(); }
 
-	public enterState(previousState: IState, manager: StateManager): IStateTransition {
+	public enterState(previousState: IState, manager: StateManager, context: any): IStateTransition {
 		console.debug('WelcomeState:enterState');
 		return concat(
 			defer(() => this.createPreloader(manager)),
 			defer(() => this.loadState(manager)),
 			defer(() => this.cleanPreloader(manager)),
 			defer(() => this.create(manager)),
+			of(true),
 		).pipe(
 			last(),
 			tap((progress) => this.dataStore.dispatch({
 				type: 'PRELOAD:COMPLETE',
+				payload: { namespace: 'welcome:assets', },
 			})),
-			mapTo({ prev: previousState, next: this, manager }),
+			mapTo({ prev: previousState, next: this, manager, context }),
 		);
 	}
 
-	public leaveState(nextState: IState, manager: StateManager): IStateTransition {
+	public leaveState(nextState: IState, manager: StateManager, context: any): IStateTransition {
 		console.debug('WelcomeState:leaveState');
 		return concat(
 			defer(() => this.unloadState(manager)),
 			defer(() => this.cleanState(manager)),
+			of(true),
 		).pipe(
 			last(),
-			mapTo({ prev: this, next: nextState, manager }),
+			mapTo({ prev: this, next: nextState, manager, context }),
 		);
 	}
 
@@ -57,7 +61,7 @@ export class WelcomeViewState extends EmptyState implements IState {
 		return TweenObservable.create(1000, 0, 100).pipe(
 			tap((progress) => this.dataStore.dispatch({
 				type: 'PRELOAD:SET_PROGRESS',
-				payload: { progress, description: 'creating' },
+				payload: { namespace: 'welcome:assets', progress, description: 'creating' },
 			})),
 		);
 	}
@@ -67,7 +71,7 @@ export class WelcomeViewState extends EmptyState implements IState {
 		return TweenObservable.create(2000, 0, 100).pipe(
 			tap((progress) => this.dataStore.dispatch({
 				type: 'PRELOAD:SET_PROGRESS',
-				payload: { progress, description: 'loading' },
+				payload: { namespace: 'welcome:assets', progress, description: 'loading' },
 			})),
 		);
 	}
@@ -105,7 +109,7 @@ export class WelcomeViewState extends EmptyState implements IState {
 		).pipe(
 			tap((progress) => this.dataStore.dispatch({
 				type: 'PRELOAD:SET_PROGRESS',
-				payload: { progress, description: 'cleaning up' },
+				payload: { namespace: 'welcome:assets', progress, description: 'cleaning up' },
 			})),
 		);
 	}
@@ -119,6 +123,7 @@ export class WelcomeViewState extends EmptyState implements IState {
 
 		this.dataStore.dispatch({
 			type: 'PRELOAD:COMPLETE',
+			payload: { namespace: 'welcome:assets', },
 		});
 
 		return empty();

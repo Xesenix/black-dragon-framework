@@ -34,7 +34,7 @@ export class WelcomeView extends React.Component<IWelcomeViewProps, IWelcomeView
 		if (dataStore !== null) {
 			this.subscription.add(dataStore.asObservable().pipe(
 				pluck('preload'),
-				pluck('assets'),
+				pluck('welcome:assets'),
 				distinctUntilChanged((x: any, y: any) => !!x && !!y && x.progress === y.progress),
 			).subscribe((preload: IPreloadState) => {
 				this.setState({ preload });

@@ -5,6 +5,6 @@ import { IState } from 'lib/state-manager/state';
 
 export const UIStatesModule = () => new ContainerModule((bind: interfaces.Bind) => {
 	// app view states
-	bind<IState>('state:initial').to(WelcomeViewState);
-	bind<IState>('state:game').to(GameViewState);
+	bind<IState>('state:initial').to(WelcomeViewState).inSingletonScope();
+	bind<IState>('state:game').to(GameViewState).inSingletonScope();
 });

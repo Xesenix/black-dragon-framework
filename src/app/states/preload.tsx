@@ -1,23 +1,24 @@
-import { injectable, inject } from 'inversify';
+import { App } from 'app/game-view/container/app';
+import { inject, injectable } from 'inversify';
+import { EmptyState, IState, IStateTransition } from 'lib/state-manager';
+import { StateManager } from 'lib/state-manager/state-manager';
 import * as React from 'react';
 import { render } from 'react-dom';
 import { concat } from 'rxjs/observable/concat';
 import { of } from 'rxjs/observable/of';
-import { throttleTime } from 'rxjs/operators/throttleTime';
 import { last } from 'rxjs/operators/last';
 import { mapTo } from 'rxjs/operators/mapTo';
 import { tap } from 'rxjs/operators/tap';
+import { throttleTime } from 'rxjs/operators/throttleTime';
 import { TweenObservable } from 'xes-rx-tween';
 
-import { IState, IStateTransition } from './../../lib/state-manager';
-import { StateManager } from './../../lib/state-manager/state-manager';
-import { App } from './../game-view/container/app';
-
 @injectable()
-export class PreloadState {
+export class PreloadState extends EmptyState implements IState {
 	public constructor(
 		@inject('ui:root') private uiRoot: HTMLElement,
-	) { }
+	) {
+		super();
+	}
 
 	public create() {
 		console.debug('PreloadState:create');
@@ -42,22 +43,22 @@ export class PreloadState {
 		return of(true);
 	}
 
-	public enterState(previousState: IState, manager: StateManager): IStateTransition {
+	public enterState(previousState: IState, manager: StateManager, context: any = {}): IStateTransition {
 		console.debug('PreloadState:enterState');
 		return concat(
 			this.create(),
 			this.loadState(),
 		).pipe(
 			last(),
-			mapTo({ prev: previousState, next: this, manager }),
+			mapTo({ prev: previousState, next: this, manager, context }),
 		);
 	}
 
-	public leaveState(nextState: IState, manager: StateManager): IStateTransition {
+	public leaveState(nextState: IState, manager: StateManager, context: any = {}): IStateTransition {
 		console.debug('PreloadState:leaveState');
 		return this.cleanState().pipe(
 			last(),
-			mapTo({ prev: this, next: nextState, manager }),
+			mapTo({ prev: this, next: nextState, manager, context }),
 		);
 	}
 }

@@ -9,7 +9,7 @@ import { Subject } from 'rxjs/Subject';
 import { EmptyState, IState } from './state';
 import { IStateTransition, IStateTransitionStep } from './state-manager';
 import { IStateProvider } from './state-provider';
-export interface IStateTransitionStep { manager: StateManager; next: IState; prev: IState; }
+export interface IStateTransitionStep { manager: StateManager; next: IState; prev: IState; context: any; }
 export type IStateTransition = Observable<IStateTransitionStep>;
 export type IStateTransitionProvider = (manager: StateManager, next: IState, prev: IState) => IStateTransition;
 
@@ -20,6 +20,7 @@ export class StateManager {
 		next: IState,
 		error: (err: any) => void,
 		complete: (value?: IStateTransitionStep | PromiseLike<IStateTransitionStep>) => void,
+		context: any,
 	}>();
 
 	public constructor(
@@ -27,7 +28,7 @@ export class StateManager {
 		@inject('state:transition:provider') private stateTransitionProvider: IStateTransitionProvider,
 	) {
 		this.transitionQueue$.pipe(
-			concatMap(({ next, error, complete }) => {
+			concatMap(({ next, error, complete, context }) => {
 				const prev = this.currentState$.getValue();
 				const transitionGroupName = `change state: ${prev.$$key} => ${next.$$key}`;
 				console.group(transitionGroupName);
@@ -47,6 +48,7 @@ export class StateManager {
 								next,
 								prev,
 								manager: this,
+								context,
 							});
 						},
 					}),
@@ -78,10 +80,10 @@ export class StateManager {
 		});
 	}
 
-	public changeState(nextStateKey: string): Promise<IStateTransitionStep> {
+	public changeState(nextStateKey: string, context: any = {}): Promise<IStateTransitionStep> {
 		return new Promise((complete, error) => {
 			this.stateProvider(nextStateKey).then((next: IState) => {
-				this.transitionQueue$.next({ next, complete, error });
+				this.transitionQueue$.next({ next, complete, error, context });
 			});
 		});
 	}

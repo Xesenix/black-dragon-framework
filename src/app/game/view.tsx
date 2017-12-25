@@ -34,9 +34,10 @@ export class GameView extends React.Component<IGameViewProps, IGameViewState> {
 		if (dataStore !== null) {
 			this.subscription.add(dataStore.asObservable().pipe(
 				pluck('preload'),
-				pluck('assets'),
+				pluck('game:assets'),
 				distinctUntilChanged((x: any, y: any) => !!x && !!y && x.progress === y.progress),
 			).subscribe((preload: IPreloadState) => {
+				console.log('preload', preload);
 				this.setState({ preload });
 			}));
 		}
@@ -50,13 +51,15 @@ export class GameView extends React.Component<IGameViewProps, IGameViewState> {
 		const { preload } = this.state;
 		const { stateManager, state } = this.props;
 
-		const startButton = (<a className="btn btn-primary" onClick={ () => stateManager.changeState('initial') }>Reset</a>);
+		const backButton = (<a className="btn btn-primary" onClick={ () => stateManager.changeState('initial') }>Back</a>);
+		const resetButton = (<a className="btn btn-primary" onClick={ () => stateManager.changeState('game') }>Reset</a>);
 
 		return (<div className="panel panel-primary">
 			<div className="panel-heading">Game</div>
 			<div className="panel-body" ref={ (element) => state.containerRef$.next(element) }></div>
 			<div className="panel-footer">
-				{ preload.complete ? startButton : `${preload.description} ${preload.progress.toFixed(0)}%` }
+				{ backButton }
+				{ preload.complete ? resetButton : `${preload.description} ${preload.progress.toFixed(0)}%` }
 			</div>
 		</div>);
 	}
