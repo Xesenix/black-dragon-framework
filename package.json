@@ -14,6 +14,7 @@
 		"serve:dev": "webpack-dev-server --env.dev --progress --inline --hot"
 	},
 	"dependencies": {
+		"@types/redux-logger": "^3.0.5",
 		"@types/webfontloader": "^1.6.29",
 		"babel-polyfill": "^6.26.0",
 		"html-webpack-externals-plugin": "^3.6.0",
@@ -22,6 +23,7 @@
 		"react": "^16.2.0",
 		"react-dom": "^16.2.0",
 		"redux": "^3.7.2",
+		"redux-logger": "^3.0.6",
 		"reflect-metadata": "^0.1.10",
 		"rxjs": "^5.5.5",
 		"webfontloader": "^1.6.28",
