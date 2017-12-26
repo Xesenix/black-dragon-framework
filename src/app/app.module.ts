@@ -6,6 +6,7 @@ import { PhaserModule } from 'lib/phaser/phaser.module';
 import { ReactRenderer } from 'lib/renderer/react-renderer';
 import { StateManager } from 'lib/state-manager';
 import { StateManagerModule } from 'lib/state-manager/state-manager.module';
+import { ThemeModule } from 'lib/theme/theme.module';
 import { IAppDataState, reducer } from './reducer';
 import { UIStatesModule } from './ui-states.module';
 
@@ -26,6 +27,7 @@ export class AppModule extends Container {
 		this.bind<EventEmitter>('event-manager').toConstantValue(new EventEmitter());
 
 		// phaser
+		this.load(ThemeModule());
 		this.load(PhaserModule());
 
 		// state management
