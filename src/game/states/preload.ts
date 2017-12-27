@@ -1,6 +1,8 @@
 import { injectable } from 'inversify';
 import { BaseState } from 'lib/phaser/state';
 
+import 'phaser-ce';
+
 @injectable()
 export class PreloadState extends BaseState {
 	private asset: any;

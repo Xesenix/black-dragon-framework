@@ -2,6 +2,8 @@ import { EventEmitter } from 'events';
 import { GameStatesModule } from 'game/states/states.module';
 import { Container } from 'inversify';
 import { DataStoreModule } from 'lib/data-store/data-store.module';
+import { IDictionary } from 'lib/dictionary/dictionary.d';
+import { FlatDictionary } from 'lib/dictionary/flat-dictionary';
 import { PhaserModule } from 'lib/phaser/phaser.module';
 import { ReactRenderer } from 'lib/renderer/react-renderer';
 import { StateManager } from 'lib/state-manager';
@@ -41,6 +43,13 @@ export class AppModule extends Container {
 
 		// setup data store
 		this.load(DataStoreModule<IAppDataState>({}, reducer, process.env.NODE_ENV !== 'production'));
+
+		// environment
+		this.bind<IDictionary>('player-pref').toConstantValue(new FlatDictionary({
+			debug: process.env.NODE_ENV !== 'production',
+		}));
+
+		this.bind<IDictionary>('environment').toConstantValue(new FlatDictionary({}));
 	}
 
 	public boot() {

@@ -40,7 +40,7 @@ module.exports = (env) => {
 				'node_modules'
 			],
 		},
-		devtool: isProd ? 'source-map' : 'eval',
+		devtool: isTest ? 'inline-source-map' : 'source-map',
 		bail: isProd,
 		module: {
 			rules: [
@@ -49,23 +49,26 @@ module.exports = (env) => {
 					loaders: [{
 						loader: 'awesome-typescript-loader',
 						options: {
-							configFileName: 'tsconfig.json'
+							configFileName: 'tsconfig.json',
+							sourceMap: !isTest,
+							inlineSourceMap: isTest
 						}
 					}],
 					exclude: /^src\/.+\.spec\.(t|j)sx?$/
 				},
 				{
-					enforce: 'pre',
-					test: /\.js$/,
-					loader: 'source-map-loader'
+					test: /\.json$/,
+					use: [
+						'json-loader',
+					]
 				},
 				{
 					test: /\.css$/,
 					use: extractCss.extract({
 						fallback: 'style-loader',
 						use: [
-							'css-loader',
-							// 'resolve-url-loader',
+							'css-loader?sourceMap',
+							'resolve-url-loader',
 						]
 					})
 				},
@@ -74,9 +77,9 @@ module.exports = (env) => {
 					use: extractSass.extract({
 						fallback: 'style-loader',
 						use: [
-							'css-loader',
-							// 'resolve-url-loader',
-							'sass-loader',
+							{ loader: 'css-loader', options: { sourceMap: true, importLoaders: 1 } },
+							'resolve-url-loader',
+							{ loader: 'sass-loader', options: { sourceMap: true } },
 						]
 					})
 				},

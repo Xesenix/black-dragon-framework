@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import { inject, injectable } from 'inversify';
+import { IPhaserSetupProvider } from 'lib/phaser/phaser-configure-state';
 import { BaseState } from 'lib/phaser/state';
 import { ITheme } from 'lib/theme/theme';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -44,6 +45,7 @@ export class BootState extends BaseState {
 	public constructor(
 		@inject('event-manager') private eventEmiter: EventEmitter,
 		@inject('theme:default') private theme: ITheme,
+		@inject('phaser:setup-state') private setupState: IPhaserSetupProvider,
 	) {
 		super();
 		console.debug('Phaser:BootState:constructor');
@@ -60,6 +62,7 @@ export class BootState extends BaseState {
 
 	public preload() {
 		console.debug('Phaser:BootState:preload');
+		this.setupState(this.game);
 
 		this.load.onLoadStart.add(() => {
 			console.debug('Phaser:BootState:load start');
