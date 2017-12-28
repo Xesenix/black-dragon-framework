@@ -1,3 +1,4 @@
+import 'jasmine'; // needed for visual code not to throw unknown descrbe, it, expect etc.
 import 'reflect-metadata';
 
 declare const __karma__: any;
