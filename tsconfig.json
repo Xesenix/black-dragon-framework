@@ -19,7 +19,7 @@
 		// "rootDir": "./",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
 		"removeComments": true,                   /* Do not emit comments to output. */
 		"noEmit": true,                           /* Do not emit outputs. */
-		// "importHelpers": true,                 /* Import emit helpers from 'tslib'. */
+		"importHelpers": true,                    /* Import emit helpers from 'tslib'. Reuse helper function reduce build size. */
 		// "downlevelIteration": true,            /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
 		// "isolatedModules": true,               /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
 
@@ -28,7 +28,7 @@
 		"noImplicitAny": false,                   /* Raise error on expressions and declarations with an implied 'any' type. */
 		"strictNullChecks": true,                 /* Enable strict null checks. */
 		"noImplicitThis": true,                   /* Raise error on 'this' expressions with an implied 'any' type. */
-		// "alwaysStrict": true,                  /* Parse in strict mode and emit "use strict" for each source file. */
+		"alwaysStrict": true,                     /* Parse in strict mode and emit "use strict" for each source file. */
 
 		/* Additional Checks */
 		"noUnusedLocals": true,                   /* Report errors on unused locals. */
@@ -45,15 +45,17 @@
 			"game/*": ["./src/game/*"],
 			"*": ["./src/*"]
 		},
-		// "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
+		// "rootDirs": ["src"],                   /* List of root folders whose combined content represents the structure of the project at runtime. */
 		"typeRoots": [                            /* List of folders to include type definitions from. */
-			"node_modules/@types"
+			"node_modules/@types",
+			"src/types"
 		],
 		"types": [                                /* Type declaration files to be included in compilation. */
 			"node",
-			"jasmine"
+			"jasmine",
+			"globals"
 		],
-		 "allowSyntheticDefaultImports": true,    /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
+		"allowSyntheticDefaultImports": true,     /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
 
 		/* Source Map Options */
 		// "sourceRoot": "./",                    /* Specify the location where debugger should locate TypeScript files instead of source locations. */
@@ -70,8 +72,6 @@
 		"skipLibCheck": true // hack https://github.com/ReactiveX/rxjs/issues/3031
 	},
 	"files": [
-		"./src/globals.d.ts",
-		"./node_modules/phaser-ce/typescript/phaser.comments.d.ts",
 		"./src/main.ts"
 	],
 	"include": [

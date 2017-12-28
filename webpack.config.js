@@ -6,11 +6,18 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin')
 const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const webpack = require('webpack');
+const merge = require('webpack-merge');
+
+const package = require('./package.json');
+const host = 'localhost';
+const port = '8080';
 
 module.exports = (env) => {
 	const isProd = !!env.prod;
 	const isTest = !!env.test;
+	const isDev = !!env.dev;
 	const extractCss = new ExtractTextPlugin({
 		filename: 'css/[name].[contenthash].css',
 		disable: !isProd
@@ -20,7 +27,7 @@ module.exports = (env) => {
 		disable: !isProd
 	});
 
-	return {
+	let config = {
 		// context: path.resolve(__dirname, 'src'),
 		entry: {
 			app: [
@@ -56,6 +63,12 @@ module.exports = (env) => {
 					}],
 					exclude: /^src\/.+\.spec\.(t|j)sx?$/
 				},
+				/*{
+					test: /\.(ts|tsx)$/,
+					loader: 'tslint-loader',
+					enforce: 'pre',
+					exclude: /node_modules/,
+				},*/
 				{
 					test: /\.json$/,
 					use: [
@@ -79,6 +92,18 @@ module.exports = (env) => {
 						use: [
 							{ loader: 'css-loader', options: { sourceMap: true, importLoaders: 1 } },
 							'resolve-url-loader',
+							// https://github.com/postcss/postcss-loader
+							/*{
+								loader: 'postcss-loader',
+								options: {
+									ident: 'postcss',
+									plugins: [
+										require('postcss-import')(),
+										require('stylelint')(),
+									],
+									sourceMap: true
+								}
+							},*/
 							{ loader: 'sass-loader', options: { sourceMap: true } },
 						]
 					})
@@ -111,7 +136,7 @@ module.exports = (env) => {
 			]
 		},
 		externals: {
-			'phaser-ce': 'Phaser'
+			'phaser-ce': 'Phaser',
 		},
 		devServer: {
 			hot: true,
@@ -119,6 +144,7 @@ module.exports = (env) => {
 			inline: true
 		},
 		plugins: [
+			isTest ? null : new ProgressBarPlugin(),
 			isProd ? new BundleAnalyzerPlugin({
 				analyzerMode: 'disabled',
 				openAnalyzer: false,
@@ -134,6 +160,7 @@ module.exports = (env) => {
 				sourceMap: true,
 			}),
 			new HtmlWebpackPlugin({
+				title: `${package.name} - ${package.version}`,
 				inject: true,
 				template: path.resolve('./src/index.html'),
 				minify: {
@@ -167,4 +194,27 @@ module.exports = (env) => {
 			isProd ? new UglifyJsPlugin() : null,
 		].filter(p => !!p)
 	}
+
+	if (isTest) {
+		config = merge(
+			{
+				module: {
+					loaders: [
+						{
+							test: /\.(ts|tsx)$/,
+							use: {
+								loader: 'istanbul-instrumenter-loader',
+								options: { esModules: true }
+							},
+							enforce: 'post',
+							exclude: /node_modules|\.spec\.ts$/,
+						},
+					]
+				}
+			},
+			config
+		);
+	}
+
+	return config;
 }
