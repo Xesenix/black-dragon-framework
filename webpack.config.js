@@ -1,6 +1,7 @@
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const DashboardPlugin = require('webpack-dashboard/plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin')
@@ -31,7 +32,7 @@ module.exports = (env) => {
 		// context: path.resolve(__dirname, 'src'),
 		entry: {
 			app: [
-				'babel-polyfill',
+				'reflect-metadata',
 				'./src/main.ts'
 			],
 		},
@@ -41,18 +42,20 @@ module.exports = (env) => {
 			filename: 'js/[name].[hash].js'
 		},
 		resolve: {
-			extensions: ['.ts', '.tsx', '.js', '.jsx'],
+			// order matters
+			extensions: ['.js', '.jsx', '.ts', '.tsx'],
 			modules: [
 				path.resolve(__dirname, 'src'),
 				'node_modules'
 			],
 		},
-		devtool: isTest ? 'inline-source-map' : 'source-map',
+		// devtool: isTest ? 'inline-source-map' : 'source-map',
+		devtool: isProd ? "hidden-source-map" : "source-map",
 		bail: isProd,
 		module: {
 			rules: [
 				{
-					test: /\.(t|j)sx?$/,
+					test: /\.tsx?$/,
 					loaders: [{
 						loader: 'awesome-typescript-loader',
 						options: {
@@ -60,8 +63,8 @@ module.exports = (env) => {
 							sourceMap: !isTest,
 							inlineSourceMap: isTest
 						}
-					}],
-					exclude: /^src\/.+\.spec\.(t|j)sx?$/
+					}, "source-map-loader"],
+					exclude: ["node_modules"]
 				},
 				/*{
 					test: /\.(ts|tsx)$/,
@@ -135,16 +138,12 @@ module.exports = (env) => {
 				},
 			]
 		},
-		externals: {
-			'phaser-ce': 'Phaser',
-		},
 		devServer: {
 			hot: true,
 			contentBase: path.resolve('public/'),
 			inline: true
 		},
 		plugins: [
-			isTest ? null : new ProgressBarPlugin(),
 			isProd ? new BundleAnalyzerPlugin({
 				analyzerMode: 'disabled',
 				openAnalyzer: false,
@@ -158,11 +157,17 @@ module.exports = (env) => {
 				minimize: isProd,
 				debug: !isProd,
 				sourceMap: true,
+				options: {
+					tslint: {
+						emitErrors: true,
+						failOnHint: true
+					}
+				},
 			}),
 			new HtmlWebpackPlugin({
 				title: `${package.name} - ${package.version}`,
 				inject: true,
-				template: path.resolve('./src/index.html'),
+				template: '!!ejs-loader!src/index.html',
 				minify: {
 					removeComments: true,
 					preserveLineBreaks: true
@@ -201,16 +206,25 @@ module.exports = (env) => {
 				module: {
 					loaders: [
 						{
-							test: /\.(ts|tsx)$/,
+							test: /\.(j|t)sx?$/,
 							use: {
 								loader: 'istanbul-instrumenter-loader',
 								options: { esModules: true }
 							},
 							enforce: 'post',
-							exclude: /node_modules|\.spec\.ts$/,
+							exclude: /node_modules|\.spec\.(j|t)sx?$/,
 						},
 					]
 				}
+			},
+			config
+		);
+	} else {
+		config = merge(
+			{
+				externals: {
+					'phaser-ce': 'Phaser',
+				},
 			},
 			config
 		);

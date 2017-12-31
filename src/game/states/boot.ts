@@ -77,14 +77,15 @@ export class BootState extends BaseState {
 			console.debug('Phaser:BootState:Assets load complete');
 		});
 
-		this.load.image('preloader', 'assets/landscape/background.png');
+		this.load.atlas('landscape', 'assets/landscape.png', 'assets/landscape.json',
+			Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
 
 		this.eventEmiter.emit(PHASER_BOOT_STATE_PRELOAD_EVENT, this.game, this);
 	}
 
 	public create() {
 		console.debug('Phaser:BootState:create');
-		const sprite = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'preloader');
+		const sprite = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'landscape', 'background');
 		sprite.anchor.set(0.5, 0.5);
 
 		this.countLabel = this.add.text(this.game.world.centerX, this.game.world.centerY, '-', {

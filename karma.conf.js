@@ -14,10 +14,25 @@ module.exports = function (config) {
 
 
 		// list of files / patterns to load in the browser
-		files: [{
-			pattern: './src/main.test.ts',
-			included: true,
-		}],
+		files: [
+			// require globals scripts
+			{
+				pattern: './node_modules/phaser-ce/build/phaser.min.js',
+				included: true,
+				watched: false,
+			},
+			{
+				pattern: './node_modules/reflect-metadata/Reflect.js',
+				included: true,
+				watched: false,
+			},
+			// entry point
+			{
+				pattern: './src/main.test.ts',
+				included: true,
+				watched: false,
+			}
+		],
 
 
 		// list of files to exclude
