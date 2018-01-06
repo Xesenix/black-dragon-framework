@@ -57,6 +57,10 @@ export class GameViewState extends EmptyState implements IState {
 			of(true),
 		).pipe(
 			last(),
+			tap((progress) => this.dataStore.dispatch({
+				type: 'PRELOAD:COMPLETE',
+				payload: { namespace: 'game:assets', progress: 100 },
+			})),
 			mapTo({ prev: previousState, next: this, manager, context }),
 		);
 	}
@@ -103,6 +107,17 @@ export class GameViewState extends EmptyState implements IState {
 			.setOutlet(null, 'enter')
 			.setOutlet((<GameView state={this} stateManager={manager} dataStore={this.dataStore} />))
 			.render();
+
+		/*if (!!module.hot) {
+			module.hot.accept('./view', () => {
+				// TODO: provide
+				this.renderer
+					.setOutlet((<GameView state={this} stateManager={manager} dataStore={this.dataStore} />))
+					.render();
+
+				this.phaserProvider(this.containerRef$.getValue());
+			});
+		}*/
 
 		return this.containerRef$.pipe(
 			filter((element) => !!element),
