@@ -8,6 +8,7 @@ let game: Game | null = null;
 export type IPhaserProvider = (parent: any) => Promise<Game>;
 
 export function PhaserProvider(context: interfaces.Context) {
+	const console: Console = context.container.get<Console>('debug:console');
 	console.debug('PhaserProvider');
 	return (parent: any, forceNew: boolean = false): Promise<Game> => {
 		console.debug('PhaserProvider:provide', parent);

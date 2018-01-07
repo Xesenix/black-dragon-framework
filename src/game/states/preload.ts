@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { BaseState } from 'lib/phaser/state';
 
 import 'phaser-ce';
@@ -7,14 +7,16 @@ import 'phaser-ce';
 export class PreloadState extends BaseState {
 	private asset: any;
 
+	@inject('debug:console') private console: Console;
+
 	public init() {
-		console.debug('Phaser:PreloadState:init');
+		this.console.debug('Phaser:PreloadState:init');
 
 		this.asset = null;
 	}
 
 	public preload() {
-		console.debug('Phaser:PreloadState:preload');
+		this.console.debug('Phaser:PreloadState:preload');
 		this.asset = this.add.sprite(this.game.world.centerX, this.game.world.centerY, 'preloader');
 		this.asset.anchor.setTo(0.5, 0.5);
 
@@ -93,12 +95,12 @@ export class PreloadState extends BaseState {
 	}
 
 	public create() {
-		console.debug('Phaser:PreloadState:create');
+		this.console.debug('Phaser:PreloadState:create');
 		this.asset.cropEnabled = false;
 	}
 
 	public onLoadComplete() {
-		console.debug('Phaser:PreloadState:onLoadComplete');
+		this.console.debug('Phaser:PreloadState:onLoadComplete');
 		this.game.state.start('intro');
 	}
 }

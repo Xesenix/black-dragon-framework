@@ -3,6 +3,7 @@ import { IState } from './state';
 import { IStateTransitionProvider, StateManager } from './state-manager';
 
 export function TransitionProvider(context: interfaces.Context) {
+	const console: Console = context.container.get<Console>('debug:console');
 	return (manager: StateManager, prev: IState, next: IState) => {
 		console.debug('state:transition:provider:', prev, next);
 		const transition = context.container.get<IStateTransitionProvider>('state:transition:default-transition');

@@ -4,6 +4,7 @@ import { IState } from './state';
 export type IStateProvider = (key: string) => Promise<IState>;
 
 export function StateProvider(context: interfaces.Context) {
+	const console: Console = context.container.get<Console>('debug:console');
 	return (key: string): Promise<IState> => {
 		console.debug('StateProvider:provide', key);
 		try {

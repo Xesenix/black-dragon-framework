@@ -25,6 +25,23 @@ export class AppModule extends Container {
 	constructor() {
 		super();
 
+		// console
+		if (process.env.NODE_ENV === 'dev') {
+			this.bind<Console>('debug:console').toConstantValue(console);
+		} else {
+			// tslint:disable:no-empty
+			const noop = () => {};
+			this.bind<Console>('debug:console').toConstantValue({
+				assert: noop,
+				debug: noop,
+				error: noop,
+				log: noop,
+				trace: noop,
+				group: noop,
+				groupEnd: noop,
+			} as Console);
+		}
+
 		// event manager
 		this.bind<EventEmitter>('event-manager').toConstantValue(new EventEmitter());
 
@@ -54,7 +71,9 @@ export class AppModule extends Container {
 
 	public boot() {
 		const uiStateManager = this.get<StateManager>('state:state-manager');
+		const console = this.get<Console>('debug:console');
 
+		console.trace('Black Dragon Framework');
 		uiStateManager.boot();
 	}
 }
