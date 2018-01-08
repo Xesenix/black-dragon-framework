@@ -114,6 +114,11 @@ module.exports = function (config) {
 		},
 
 
+		client: {
+			clearContext: false // leave Jasmine Spec Runner output visible in browser
+		},
+
+
 		// web server port
 		port: 9876,
 
