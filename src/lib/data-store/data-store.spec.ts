@@ -20,6 +20,18 @@ describe('DataStore', () => {
 	};
 	container.load(DataStoreModule<IMockAppDataState>({}, reducer));
 
+	// tslint:disable:no-empty
+	const noop = () => {};
+	container.bind<Console>('debug:console').toConstantValue({
+		assert: noop,
+		debug: noop,
+		error: noop,
+		log: noop,
+		trace: noop,
+		group: noop,
+		groupEnd: noop,
+	} as Console);
+
 	beforeEach(() => {
 		container.snapshot();
 	});
@@ -30,6 +42,24 @@ describe('DataStore', () => {
 
 	describe('dispatch', () => {
 		it('should run reducer on dispatch', () => {
+			const initialState = { };
+			const reducerSpy = jasmine.createSpy('reducer', reducer);
+			container.rebind<Reducer<IMockAppDataState>>('data-store:action-reducer').toConstantValue(reducerSpy);
+			container.rebind<IMockAppDataState>('data-store:initial-state').toConstantValue(initialState);
+			const dataStore = container.get<DataStore<IMockAppDataState>>('data-store');
+			const action = {
+				type: 'SET',
+				payload: { key: 'test', value: '' },
+			};
+
+			dataStore.dispatch(action);
+
+			expect(reducerSpy.calls.mostRecent().args).toEqual([initialState, action]);
+		});
+	});
+
+	describe('subscribe', () => {
+		it('should emit last value on subscribtion', () => {
 			const initialState = { };
 			const reducerSpy = jasmine.createSpy('reducer', reducer);
 			container.rebind<Reducer<IMockAppDataState>>('data-store:action-reducer').toConstantValue(reducerSpy);

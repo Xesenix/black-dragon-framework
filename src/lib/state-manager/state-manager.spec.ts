@@ -48,6 +48,18 @@ describe('StateManager', () => {
 	container.bind<IStateTransitionProvider>('state:transition:default-transition').toConstantValue(ParallelTransition);
 	container.bind<IStateTransitionProvider>('state:transition:provider').toFactory(TransitionProvider);
 
+	// tslint:disable:no-empty
+	const noop = () => {};
+	container.bind<Console>('debug:console').toConstantValue({
+		assert: noop,
+		debug: noop,
+		error: noop,
+		log: noop,
+		trace: noop,
+		group: noop,
+		groupEnd: noop,
+	} as Console);
+
 	beforeEach(() => {
 		container.snapshot();
 	});
@@ -65,7 +77,7 @@ describe('StateManager', () => {
 			spyOn(currentState, 'leaveState').and.callThrough();
 			spyOn(nextState, 'enterState').and.callThrough();
 
-			console.debug('=== async start');
+			// console.debug('=== async start');
 			sm.boot()
 			.then(() => sm.changeState(nextStateKey))
 			.then(
@@ -76,7 +88,7 @@ describe('StateManager', () => {
 					expect(currentState.leaveState).toHaveBeenCalled();
 					expect(nextState.enterState).toHaveBeenCalled();
 					done();
-					console.debug('=== async completed');
+					// console.debug('=== async completed');
 				},
 				(err) => {
 					console.error(err.message);

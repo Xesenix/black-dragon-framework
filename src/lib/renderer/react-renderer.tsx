@@ -16,7 +16,7 @@ export class ReactRenderer {
 	}
 
 	public render(): ReactRenderer {
-		const content = [];
+		const content = new Array<JSX.Element>();
 		for (const key in this.outlets) {
 			if (this.outlets.hasOwnProperty(key)) {
 				const element = this.outlets[key];
@@ -34,7 +34,7 @@ export class ReactRenderer {
 			}
 		}
 
-		render((<div>Layout: { content }</div>), this.uiRoot);
+		render((<div>{ content }</div>), this.uiRoot);
 
 		return this;
 	}
