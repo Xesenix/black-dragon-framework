@@ -15,8 +15,12 @@ __karma__.loaded = () => ({});
 //document.body.appendChild(placeholder);
 
 // Then we find all the tests.
-const context = (require as any).context('.', true, /.*\.ts$/);
+const context = (require as any).context('.', true, /.*\.spec\.ts$/);
+
 // And load the modules.
 context.keys().map(context);
+
 // Finally, start Karma to run the tests.
-__karma__.start();
+window.onload = () => {
+	__karma__.start();
+};

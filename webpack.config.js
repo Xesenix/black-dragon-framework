@@ -30,12 +30,6 @@ module.exports = (env) => {
 
 	let config = {
 		// context: path.resolve(__dirname, 'src'),
-		entry: {
-			app: [
-				'reflect-metadata',
-				'./src/main.ts'
-			],
-		},
 		output: {
 			path: isProd ? path.resolve(__dirname, 'dist') : path.resolve(__dirname, 'public'),
 			publicPath: '',
@@ -50,7 +44,7 @@ module.exports = (env) => {
 			],
 		},
 		// devtool: isTest ? 'inline-source-map' : 'source-map',
-		devtool: isProd ? "hidden-source-map" : "source-map",
+		devtool: isProd ? "hidden-source-map" : "inline-source-map",
 		bail: isProd,
 		module: {
 			rules: [
@@ -60,11 +54,21 @@ module.exports = (env) => {
 						loader: 'awesome-typescript-loader',
 						options: {
 							configFileName: 'tsconfig.json',
-							sourceMap: !isTest,
-							inlineSourceMap: isTest
+							// sourceMap: !isTest,
+							// inlineSourceMap: isTest
 						}
 					}, "source-map-loader"],
 					exclude: ["node_modules"]
+				},
+				// coverage
+				{
+					test: /\.tsx?$/,
+					enforce: 'post',
+					loader: 'istanbul-instrumenter-loader',
+					exclude: /node_modules|test/,
+					query: {
+						esModules: true
+					}
 				},
 				/*{
 					test: /\.(ts|tsx)$/,
@@ -212,7 +216,7 @@ module.exports = (env) => {
 								options: { esModules: true }
 							},
 							enforce: 'post',
-							exclude: /node_modules|\.spec\.(j|t)sx?$/,
+							exclude: /node_modules/,
 						},
 					]
 				}
@@ -222,6 +226,12 @@ module.exports = (env) => {
 	} else {
 		config = merge(
 			{
+				entry: {
+					app: [
+						'reflect-metadata',
+						'./src/main.ts'
+					],
+				},
 				externals: {
 					'phaser-ce': 'Phaser',
 				},

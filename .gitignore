@@ -1,3 +1,7 @@
 .awcache/
 node_modules/
 dist/
+public/assets/sounds/
+public/js/phaser.js
+public/fonts/
+coverage/

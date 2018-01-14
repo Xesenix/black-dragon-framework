@@ -31,7 +31,13 @@ module.exports = function (config) {
 				pattern: './src/main.test.ts',
 				included: true,
 				watched: false,
-			}
+			},
+			// coverage
+			// {
+			//	pattern: './src/**/*.spec.ts',
+			//	included: true,
+			//	watched: false,
+			// }
 		],
 
 
@@ -42,8 +48,8 @@ module.exports = function (config) {
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
-			// './src/**/*.spec.ts': ['webpack', 'sourcemap'],
-			'./src/main.test.ts': ['webpack', 'coverage', 'sourcemap'],
+			//'./src/**/!(*.spec)+(.ts)': ['webpack', 'coverage', 'sourcemap'],
+			'./src/main.test.ts': ['webpack', 'sourcemap'],
 		},
 
 
@@ -54,16 +60,17 @@ module.exports = function (config) {
 		// possible values: 'dots', 'progress'
 		// available reporters: https://npmjs.org/browse/keyword/karma-reporter
 		reporters: [
-			'progress',
+			// 'progress',
 			// 'html',
 			'kjhtml',
 			// 'coverage-istanbul',
 			// 'istanbul',
-			// 'remap-coverage'
+			'coverage',
+			'remap-coverage',
 		],
 
 
-		htmlReporter: {
+		/*htmlReporter: {
 			outputFile: 'result.html',
 			outputDir: './logs/tests',
 			// Optional
@@ -82,10 +89,10 @@ module.exports = function (config) {
 			// experimental
 			preserveDescribeNesting: true, // folded suites stay folded
 			foldAll: true // reports start folded (only with preserveDescribeNesting)
-		},
+		},*/
 
 
-		coverageReporter: {
+		/* coverageReporter: {
 			// dir: 'logs/coverage',
 			reporters: [
 				{ type: 'in-memory' },
@@ -95,23 +102,23 @@ module.exports = function (config) {
 				// { type: 'text', subdir: '.', file: 'coverage.txt' },
 				// { type: 'html', subdir: './html' }
 			]
-		},
+		}, */
 
-		remapCoverageReporter: {
+		/* remapCoverageReporter: {
 			'text-summary': null,
 			json: './coverage/coverage.json',
 			html: './coverage/html',
 			lcovonly: './coverage/lcov.info'
-		},
+		}, */
 
-		coverageIstanbulReporter: {
+		/* coverageIstanbulReporter: {
 			reports: [ 'text-summary' ],
 			fixWebpackSourcePaths: true
-		},
+		}, */
 
-		webpackMiddleware: {
+		/* webpackMiddleware: {
 			stats: 'errors-only'
-		},
+		}, */
 
 
 		client: {
@@ -130,6 +137,9 @@ module.exports = function (config) {
 		// level of logging
 		// possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
 		logLevel: config.LOG_DEBUG,
+
+
+		// captureConsole: false,
 
 
 		// enable / disable watching file and executing tests whenever any file changes
