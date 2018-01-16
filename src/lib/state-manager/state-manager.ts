@@ -25,7 +25,7 @@ export class StateManager {
 
 	public constructor(
 		@inject('state:state-provider') private stateProvider: IStateProvider,
-		@inject('state:transition:provider') private stateTransitionProvider: IStateTransitionProvider,
+		@inject('state:transition:provider') stateTransitionProvider: IStateTransitionProvider,
 		@inject('debug:console') private console: Console,
 	) {
 		this.transitionQueue$
@@ -35,7 +35,7 @@ export class StateManager {
 						const prev = this.currentState$.getValue();
 						const transitionGroupName = `change state: ${prev.$$key} => ${next.$$key}`;
 						this.console.group(transitionGroupName);
-						return this.stateTransitionProvider(
+						return stateTransitionProvider(
 								this,
 								this.currentState$.getValue(),
 								next,

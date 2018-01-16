@@ -71,15 +71,19 @@ describe('StateManager', () => {
 	describe('changeState', () => {
 		it('should set current state to next state after finishing', (done) => {
 			const sm: StateManager = container.get<StateManager>(StateManager);
-			const currentState = sm.currentState$.getValue();
+			let currentState;
 			const nextStateKey = 'preload';
 			const nextState = container.get<IState>(`state:${nextStateKey}`);
-			spyOn(currentState, 'leaveState').and.callThrough();
 			spyOn(nextState, 'enterState').and.callThrough();
 
 			// console.debug('=== async start');
 			sm.boot()
-			.then(() => sm.changeState(nextStateKey))
+			.then(() => {
+				currentState = sm.currentState$.getValue();
+				spyOn(currentState, 'leaveState').and.callThrough();
+
+				return sm.changeState(nextStateKey);
+			})
 			.then(
 				(value) => {
 					expect(value.prev).toBe(currentState);
