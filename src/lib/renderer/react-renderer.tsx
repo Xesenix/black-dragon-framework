@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render } from 'react-dom';
 
-import { injectable } from 'lib/di';
+import { inject } from 'lib/di';
 
 @inject(['ui:root'])
 export class ReactRenderer {

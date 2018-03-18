@@ -13,6 +13,7 @@ const config = {
 module.exports = (env) => {
 	const webpackConfig = webpack.webpackConfigFactory(config);
 
+	webpackConfig.devtool = 'source-map';
 	webpackConfig.plugins.push(
 		new CopyWebpackPlugin([{
 			from: path.resolve(__dirname, 'node_modules/phaser-ce/build/phaser.min.js'),

@@ -1,14 +1,19 @@
 import { BaseState } from 'lib/phaser/state';
 
-import { inject, injectable } from 'lib/di';
+import { inject } from 'lib/di';
 
 import 'phaser-ce';
 
-@injectable()
+@inject(['debug:console'])
 export class PreloadState extends BaseState {
 	private asset: any;
 
-	@inject('debug:console') private console: Console;
+	// @inject('debug:console')
+	constructor(
+		private console: Console,
+	) {
+		super();
+	}
 
 	public init() {
 		this.console.debug('Phaser:PreloadState:init');
