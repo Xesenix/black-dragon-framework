@@ -1,8 +1,9 @@
-import { inject, injectable, optional } from 'inversify';
 import { AnyAction, createStore, Reducer } from 'redux';
 import { Observable } from 'rxjs/Observable';
 
-@injectable()
+import { inject, optional } from 'lib/di';
+
+@inject(['data-store:initial-state', 'data-store:action-reducer', 'data-store:store-enhancer'])
 export class DataStore<T> {
 	private store = createStore(
 		this.reducer,
@@ -18,9 +19,9 @@ export class DataStore<T> {
 	});
 
 	public constructor(
-		@inject('data-store:initial-state') private state: T,
-		@inject('data-store:action-reducer') public reducer: Reducer<T>,
-		@inject('data-store:store-enhancer') @optional() private enhancer: any,
+		private state: T,
+		public reducer: Reducer<T>,
+		@optional() private enhancer: any,
 	) { }
 
 	public dispatch(action: AnyAction): AnyAction {

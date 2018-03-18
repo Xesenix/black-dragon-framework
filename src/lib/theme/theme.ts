@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from 'lib/di';
 
 export interface ITheme {
 	primaryFont: string;

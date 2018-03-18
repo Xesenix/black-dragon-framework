@@ -1,6 +1,7 @@
-import { injectable } from 'inversify';
 import { of } from 'rxjs/observable/of';
 import { IStateTransition, StateManager } from './index';
+
+import { injectable } from 'lib/di';
 
 export interface IState {
 	$$key: string;

@@ -1,7 +1,8 @@
-import { injectable } from 'inversify';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { IDictionary } from './dictionary.d';
+
+import { injectable } from 'lib/di';
 
 @injectable()
 export class ObservableDictionary implements IDictionary {

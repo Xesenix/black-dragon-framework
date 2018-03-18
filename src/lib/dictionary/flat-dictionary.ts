@@ -1,5 +1,6 @@
-import { injectable } from 'inversify';
 import { IDictionary } from './dictionary.d';
+
+import { injectable } from 'lib/di';
 
 @injectable()
 export class FlatDictionary implements IDictionary {

@@ -1,5 +1,4 @@
 import { EventEmitter } from 'events';
-import { inject, injectable } from 'inversify';
 import { IPhaserSetupProvider } from 'lib/phaser/phaser-configure-state';
 import { BaseState } from 'lib/phaser/state';
 import { ITheme } from 'lib/theme/theme';
@@ -11,13 +10,15 @@ import { switchMap } from 'rxjs/operators/switchMap';
 import { tap } from 'rxjs/operators/tap';
 import { Subscription } from 'rxjs/Subscription';
 
+import { inject } from 'lib/di';
+
 import 'phaser-ce';
 
 export const PHASER_BOOT_STATE_INIT_EVENT = Symbol('BootState:init:event');
 export const PHASER_BOOT_STATE_PRELOAD_EVENT = Symbol('BootState:preload:event');
 export const PHASER_BOOT_STATE_SHUTDOWN_EVENT = Symbol('BootState:shutdown:event');
 
-@injectable()
+@inject(['event-manager', 'theme:default', 'phaser:setup-state'])
 export class BootState extends BaseState {
 	private countLabel: Phaser.Text;
 
@@ -43,9 +44,9 @@ export class BootState extends BaseState {
 	private last = 0;
 
 	public constructor(
-		@inject('event-manager') private eventEmiter: EventEmitter,
-		@inject('theme:default') private theme: ITheme,
-		@inject('phaser:setup-state') private setupState: IPhaserSetupProvider,
+		private eventEmiter: EventEmitter,
+		private theme: ITheme,
+		private setupState: IPhaserSetupProvider,
 	) {
 		super();
 		console.debug('Phaser:BootState:constructor');

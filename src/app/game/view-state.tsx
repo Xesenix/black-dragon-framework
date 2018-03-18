@@ -1,7 +1,7 @@
 import { IAppDataState } from 'app/reducer';
 import { EventEmitter } from 'events';
 import { PHASER_BOOT_STATE_INIT_EVENT } from 'game/states/boot';
-import { inject, injectable } from 'inversify';
+import { inject } from 'lib/di';
 import { DataStore } from 'lib/data-store/data-store';
 import { Game } from 'lib/phaser/game';
 import { IPhaserProvider } from 'lib/phaser/phaser-provider';
@@ -24,7 +24,7 @@ import { GameView } from './view';
 
 import 'phaser-ce';
 
-@injectable()
+@inject(['data-store', 'event-manager', 'phaser:phaser-provider', 'ui:renderer'])
 export class GameViewState extends EmptyState implements IState {
 	public containerRef$: BehaviorSubject<any> = new BehaviorSubject(null);
 
@@ -33,10 +33,10 @@ export class GameViewState extends EmptyState implements IState {
 	private game: Game;
 
 	public constructor(
-		@inject('data-store') private dataStore: DataStore<IAppDataState>,
-		@inject('event-manager') private eventManager: EventEmitter,
-		@inject('phaser:phaser-provider') private phaserProvider: IPhaserProvider,
-		@inject('ui:renderer') private renderer: ReactRenderer,
+		private dataStore: DataStore<IAppDataState>,
+		private eventManager: EventEmitter,
+		private phaserProvider: IPhaserProvider,
+		private renderer: ReactRenderer,
 	) { super(); }
 
 	public enterState(previousState: IState, manager: StateManager, context: any): IStateTransition {

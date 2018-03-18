@@ -1,13 +1,14 @@
-import { inject, injectable } from 'inversify';
 import * as React from 'react';
 import { render } from 'react-dom';
 
-@injectable()
+import { injectable } from 'lib/di';
+
+@inject(['ui:root'])
 export class ReactRenderer {
 	private outlets: { [key: string]: any } = {};
 
 	constructor(
-		@inject('ui:root') private uiRoot: HTMLElement,
+		private uiRoot: HTMLElement,
 	) { }
 
 	public setOutlet(component: any, outlet: string = 'main'): ReactRenderer {

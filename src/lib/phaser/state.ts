@@ -1,6 +1,6 @@
-import { injectable } from 'inversify';
-
 import 'phaser-ce';
+
+import { injectable } from 'lib/di';
 
 export type IPhaserState = any;
 

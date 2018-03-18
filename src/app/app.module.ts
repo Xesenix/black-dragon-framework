@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
-import { GameStatesModule } from 'game/states/states.module';
 import { Container } from 'inversify';
+
+import { GameStatesModule } from 'game/states/states.module';
 import { DataStoreModule } from 'lib/data-store/data-store.module';
 import { IDictionary } from 'lib/dictionary/dictionary.d';
 import { FlatDictionary } from 'lib/dictionary/flat-dictionary';
@@ -9,6 +10,7 @@ import { ReactRenderer } from 'lib/renderer/react-renderer';
 import { StateManager } from 'lib/state-manager';
 import { StateManagerModule } from 'lib/state-manager/state-manager.module';
 import { ThemeModule } from 'lib/theme/theme.module';
+
 import { IAppDataState, reducer } from './reducer';
 import { UIStatesModule } from './ui-states.module';
 

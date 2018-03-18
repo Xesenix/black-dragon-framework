@@ -1,4 +1,3 @@
-import { inject, injectable } from 'inversify';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { concatMap } from 'rxjs/operators/concatMap';
@@ -9,11 +8,14 @@ import { Subject } from 'rxjs/Subject';
 import { EmptyState, IState } from './state';
 import { IStateTransition, IStateTransitionStep } from './state-manager';
 import { IStateProvider } from './state-provider';
+
+import { inject } from 'lib/di';
+
 export interface IStateTransitionStep { manager: StateManager; next: IState; prev: IState; context: any; }
 export type IStateTransition = Observable<IStateTransitionStep>;
 export type IStateTransitionProvider = (manager: StateManager, next: IState, prev: IState) => IStateTransition;
 
-@injectable()
+@inject(['state:state-provider', 'state:transition:provider', 'debug:console'])
 export class StateManager {
 	public currentState$ = new BehaviorSubject<IState>(new EmptyState());
 	public transitionQueue$ = new Subject<{
@@ -24,9 +26,9 @@ export class StateManager {
 	}>();
 
 	public constructor(
-		@inject('state:state-provider') private stateProvider: IStateProvider,
-		@inject('state:transition:provider') stateTransitionProvider: IStateTransitionProvider,
-		@inject('debug:console') private console: Console,
+		private stateProvider: IStateProvider,
+		stateTransitionProvider: IStateTransitionProvider,
+		private console: Console,
 	) {
 		this.transitionQueue$
 			.pipe(

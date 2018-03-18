@@ -1,5 +1,6 @@
-import { inject, injectable } from 'inversify';
 import { BaseState } from 'lib/phaser/state';
+
+import { inject, injectable } from 'lib/di';
 
 import 'phaser-ce';
 

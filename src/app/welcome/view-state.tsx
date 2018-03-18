@@ -1,5 +1,4 @@
 import { IAppDataState } from 'app/reducer';
-import { inject, injectable, tagged } from 'inversify';
 import { DataStore } from 'lib/data-store/data-store';
 import { ReactRenderer } from 'lib/renderer/react-renderer';
 import { EmptyState, IState } from 'lib/state-manager/state';
@@ -15,11 +14,13 @@ import { tap } from 'rxjs/operators/tap';
 import { TweenObservable } from 'xes-rx-tween';
 import { WelcomeView } from './view';
 
-@injectable()
+import { inject, injectable, tagged } from 'lib/di';
+
+@inject(['data-store', 'ui:renderer'])
 export class WelcomeViewState extends EmptyState implements IState {
 	public constructor(
-		@inject('data-store') private dataStore: DataStore<IAppDataState>,
-		@inject('ui:renderer') @tagged('engine', 'react') private renderer: ReactRenderer,
+		private dataStore: DataStore<IAppDataState>,
+		@tagged('engine', 'react') private renderer: ReactRenderer,
 	) { super(); }
 
 	public enterState(previousState: IState, manager: StateManager, context: any): IStateTransition {
