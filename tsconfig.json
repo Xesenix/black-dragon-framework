@@ -15,7 +15,7 @@
 		"declaration": false,                     /* Generates corresponding '.d.ts' file. */
 		"sourceMap": true,                        /* Generates corresponding '.map' file. */
 		// "outFile": "dist.js",                  /* Concatenate and emit output to single file. */
-		"outDir": "./dist/out-tsc",               /* Redirect output structure to the directory. */
+		"outDir": "./build/out-tsc",              /* Redirect output structure to the directory. */
 		// "rootDir": "./",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
 		"removeComments": true,                   /* Do not emit comments to output. */
 		"noEmit": true,                           /* Do not emit outputs. */
@@ -54,6 +54,9 @@
 			"node",
 			"jasmine",
 			"globals"
+			"jasmine-enzyme",
+			"enzyme",
+			"reflect-metadata"
 		],
 		"allowSyntheticDefaultImports": true,     /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
 
@@ -69,13 +72,11 @@
 		"plugins": [{
 			"name": "tslint-language-service"
 		}],
-		"skipLibCheck": true // hack https://github.com/ReactiveX/rxjs/issues/3031
+		"skipLibCheck": true                      /* hack @see https://github.com/ReactiveX/rxjs/issues/3031 */
 	},
-	"files": [
-		"./src/main.ts"
-	],
 	"include": [
-		"src/**/*.ts"
+		"./**/*.ts",
+		"./**/*.tsx"
 	],
 	"exclude": [
 		"node_modules"
