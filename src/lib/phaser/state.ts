@@ -1,4 +1,4 @@
-import 'phaser-ce';
+import 'phaser';
 
 import { injectable } from 'lib/di';
 

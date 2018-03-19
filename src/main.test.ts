@@ -1,26 +1,23 @@
-// testing react
-// import Enzyme from 'enzyme';
-// import Adapter from 'enzyme-adapter-react-16';
+import 'p2';
+import 'pixi';
+import 'phaser';
 
-// Enzyme.configure({ adapter: new Adapter() });
+import Enzyme from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
 
-declare const __karma__: any;
+/**
+ * Required to import interceptor during tests to prevent:
+ * TypeError: Cannot read property 'call' of undefined
+ * @see https://github.com/theKashey/rewiremock#webpack-troubleshooting
+ */
+import 'rewiremock/webpack/interceptor';
 
-// Prevent Karma from running prematurely.
-__karma__.loaded = () => ({});
+Enzyme.configure({ adapter: new Adapter() });
 
-// Prepare root for attaching DOM components
-//const placeholder = document.createElement('div');
-//placeholder.setAttribute('id', 'placeholder');
-//document.body.appendChild(placeholder);
-
-// Then we find all the tests.
-const context = (require as any).context('.', true, /.*\.spec\.ts$/);
-
-// And load the modules.
-context.keys().map(context);
-
-// Finally, start Karma to run the tests.
-window.onload = () => {
-	__karma__.start();
-};
+const excludeRegexp: RegExp = /\..*\/(main|index)\./;
+/**
+ * We need to load all test files to be included in karma. And all others to generate test coverage.
+ * @see https://github.com/webpack-contrib/karma-webpack#alternative-usage
+ */
+const context = require.context('.', true, /\.(t|j)sx?$/);
+context.keys().filter(p => !excludeRegexp.test(p)).forEach(context);

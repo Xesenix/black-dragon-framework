@@ -22,7 +22,7 @@ import { tap } from 'rxjs/operators/tap';
 import { TweenObservable } from 'xes-rx-tween';
 import { GameView } from './view';
 
-import 'phaser-ce';
+import 'phaser';
 
 @inject(['data-store', 'event-manager', 'phaser:phaser-provider', 'ui:renderer'])
 export class GameViewState extends EmptyState implements IState {

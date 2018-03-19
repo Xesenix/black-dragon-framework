@@ -1,7 +1,7 @@
 import { interfaces } from 'inversify';
 import { IDictionary } from 'lib/dictionary/dictionary.d';
 
-import 'phaser-ce';
+import 'phaser';
 
 export type IPhaserSetupProvider = (game: Phaser.Game) => void;
 

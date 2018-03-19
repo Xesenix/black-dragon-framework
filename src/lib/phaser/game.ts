@@ -1,4 +1,4 @@
-import 'phaser-ce';
+import 'phaser';
 
 export class Game extends Phaser.Game {
 	public mount(parent: any): void {

@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { inject } from 'lib/di';
 
-import 'phaser-ce';
+import 'phaser';
 
 export const PHASER_BOOT_STATE_INIT_EVENT = Symbol('BootState:init:event');
 export const PHASER_BOOT_STATE_PRELOAD_EVENT = Symbol('BootState:preload:event');

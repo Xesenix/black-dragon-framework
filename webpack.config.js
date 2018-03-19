@@ -12,14 +12,18 @@ const config = {
 
 module.exports = (env) => {
 	const webpackConfig = webpack.webpackConfigFactory(config);
+	const phaserModulePath = path.resolve(__dirname, 'node_modules/phaser-ce/build');
 
 	webpackConfig.devtool = 'source-map';
-	webpackConfig.plugins.push(
-		new CopyWebpackPlugin([{
-			from: path.resolve(__dirname, 'node_modules/phaser-ce/build/phaser.min.js'),
-			to: path.resolve(__dirname, 'dist/js/phaser.js'),
-		}])
-	);
+
+	webpackConfig.module.rules.push({ test: /pixi\.js/, loader: 'expose-loader?PIXI' });
+	webpackConfig.module.rules.push({ test: /phaser-split\.js$/, loader: 'expose-loader?Phaser' });
+	webpackConfig.module.rules.push({ test: /p2\.js/, loader: 'expose-loader?p2' });
+
+	webpackConfig.resolve.alias = webpackConfig.resolve.alias || {};
+	webpackConfig.resolve.alias['phaser'] = path.join(phaserModulePath, 'custom/phaser-split.js');
+	webpackConfig.resolve.alias['pixi'] = path.join(phaserModulePath, 'custom/pixi.js');
+	webpackConfig.resolve.alias['p2'] = path.join(phaserModulePath, 'custom/p2.js');
 
 	return webpackConfig;
 }

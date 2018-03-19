@@ -2,7 +2,7 @@ import { BaseState } from 'lib/phaser/state';
 
 import { inject } from 'lib/di';
 
-import 'phaser-ce';
+import 'phaser';
 
 @inject(['debug:console'])
 export class PreloadState extends BaseState {
