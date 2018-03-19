@@ -78,7 +78,7 @@ export class BootState extends BaseState {
 			console.debug('Phaser:BootState:Assets load complete');
 		});
 
-		this.load.atlas('landscape', 'assets/landscape.png', 'assets/landscape.json',
+		this.load.atlas('landscape', 'assets/landscape/landscape.png', 'assets/landscape/landscape.json',
 			Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
 
 		this.eventEmiter.emit(PHASER_BOOT_STATE_PRELOAD_EVENT, this.game, this);
