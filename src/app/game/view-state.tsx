@@ -20,7 +20,7 @@ import { last } from 'rxjs/operators/last';
 import { mapTo } from 'rxjs/operators/mapTo';
 import { tap } from 'rxjs/operators/tap';
 import { TweenObservable } from 'xes-rx-tween';
-import { GameView } from './view';
+import GameView from './view';
 
 import 'phaser';
 

@@ -1,10 +1,12 @@
-import { IAppDataState, IPreloadState } from 'app/reducer';
-import { DataStore } from 'lib/data-store/data-store';
-import { StateManager } from 'lib/state-manager/index';
 import * as React from 'react';
+import { hot } from 'react-hot-loader';
 import { distinctUntilChanged } from 'rxjs/operators/distinctUntilChanged';
 import { pluck } from 'rxjs/operators/pluck';
 import { Subscription } from 'rxjs/Subscription';
+
+import { IAppDataState, IPreloadState } from 'app/reducer';
+import { DataStore } from 'lib/data-store/data-store';
+import { StateManager } from 'lib/state-manager/index';
 import { GameViewState } from './view-state';
 
 export interface IGameViewProps {
@@ -17,7 +19,7 @@ export interface IGameViewState {
 	preload: IPreloadState;
 }
 
-export class GameView extends React.Component<IGameViewProps, IGameViewState> {
+class GameView extends React.Component<IGameViewProps, IGameViewState> {
 	private subscription: Subscription = new Subscription();
 
 	constructor(props: IGameViewProps, context: any) {
@@ -71,3 +73,5 @@ export class GameView extends React.Component<IGameViewProps, IGameViewState> {
 		</div>);
 	}
 }
+
+export default hot(module)(GameView);

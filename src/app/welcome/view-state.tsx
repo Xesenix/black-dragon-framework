@@ -1,8 +1,3 @@
-import { IAppDataState } from 'app/reducer';
-import { DataStore } from 'lib/data-store/data-store';
-import { ReactRenderer } from 'lib/renderer/react-renderer';
-import { EmptyState, IState } from 'lib/state-manager/state';
-import { IStateTransition, StateManager } from 'lib/state-manager/state-manager';
 import * as React from 'react';
 import { concat } from 'rxjs/observable/concat';
 import { defer } from 'rxjs/observable/defer';
@@ -12,15 +7,21 @@ import { last } from 'rxjs/operators/last';
 import { mapTo } from 'rxjs/operators/mapTo';
 import { tap } from 'rxjs/operators/tap';
 import { TweenObservable } from 'xes-rx-tween';
-import { WelcomeView } from './view';
 
-import { inject, injectable, tagged } from 'lib/di';
+import { IAppDataState } from 'app/reducer';
+import { DataStore } from 'lib/data-store/data-store';
+import { inject, injectable } from 'lib/di';
+import { ReactRenderer } from 'lib/renderer/react-renderer';
+import { EmptyState, IState } from 'lib/state-manager/state';
+import { IStateTransition, StateManager } from 'lib/state-manager/state-manager';
+
+import WelcomeView from './view';
 
 @inject(['data-store', 'ui:renderer'])
 export class WelcomeViewState extends EmptyState implements IState {
 	public constructor(
 		private dataStore: DataStore<IAppDataState>,
-		@tagged('engine', 'react') private renderer: ReactRenderer,
+		private renderer: ReactRenderer,
 	) { super(); }
 
 	public enterState(previousState: IState, manager: StateManager, context: any): IStateTransition {

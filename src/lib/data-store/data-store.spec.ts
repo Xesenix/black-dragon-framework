@@ -1,6 +1,8 @@
 import { Container } from 'inversify';
-import { DataStore } from 'lib/data-store/data-store';
 import { Reducer } from 'redux';
+
+import { DataStore } from 'lib/data-store/data-store';
+
 import { DataStoreModule } from './data-store.module';
 
 interface IMockAppDataState {

@@ -1,10 +1,12 @@
-import { IAppDataState, IPreloadState } from 'app/reducer';
-import { DataStore } from 'lib/data-store/data-store';
-import { StateManager } from 'lib/state-manager';
 import * as React from 'react';
+import { hot } from 'react-hot-loader';
 import { distinctUntilChanged } from 'rxjs/operators/distinctUntilChanged';
 import { pluck } from 'rxjs/operators/pluck';
 import { Subscription } from 'rxjs/Subscription';
+
+import { IAppDataState, IPreloadState } from 'app/reducer';
+import { DataStore } from 'lib/data-store/data-store';
+import { StateManager } from 'lib/state-manager';
 
 export interface IWelcomeViewProps {
 	dataStore: DataStore<IAppDataState>;
@@ -16,7 +18,7 @@ export interface IWelcomeViewState {
 	currentState: any;
 }
 
-export class WelcomeView extends React.Component<IWelcomeViewProps, IWelcomeViewState> {
+class WelcomeView extends React.Component<IWelcomeViewProps, IWelcomeViewState> {
 	private subscription: Subscription = new Subscription();
 
 	constructor(props: IWelcomeViewProps, context: any) {
@@ -69,3 +71,5 @@ export class WelcomeView extends React.Component<IWelcomeViewProps, IWelcomeView
 		</div>);
 	}
 }
+
+export default hot(module)(WelcomeView);
