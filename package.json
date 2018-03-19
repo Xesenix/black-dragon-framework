@@ -1,6 +1,6 @@
 {
 	"name": "black-dragon-framework",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "Game creation framework - state management, dependency injection, entity system, interchangeable view renderers. On top of webpack typescript",
 	"main": "src/main.ts",
 	"scripts": {
